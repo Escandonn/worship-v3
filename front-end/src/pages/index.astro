@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar";
 import ParticlesBackground from "../components/ParticlesBackground";
-import AntigravityText from "../components/AntigravityText";
+import HeroCyclingContent from "../components/HeroCyclingContent";
 import "../styles/global.css";
 ---
 
@@ -14,29 +14,6 @@ import "../styles/global.css";
     >
         <ParticlesBackground client:only="react" />
 
-        <div class="relative z-10 flex flex-col items-center">
-            {/* Logo Triángulo */}
-            <div
-                class="w-0 h-0 border-l-[22px] border-l-transparent border-r-[22px] border-r-transparent border-b-[38px] border-b-white mb-8 animate-logo"
-            >
-            </div>
-
-            <AntigravityText
-                client:load
-                tag="h1"
-                text="Diseño tipo Google Antigravity"
-                className="text-[34px] md:text-[64px] font-bold tracking-tight px-4"
-                letterClassName="bg-linear-to-r from-white to-[#bcd0ff] bg-clip-text text-transparent"
-                delayStart={0.3}
-            />
-
-            <AntigravityText
-                client:load
-                tag="p"
-                text="Animación suave letra por letra"
-                className="text-xl md:text-2xl text-white/70 mt-6"
-                delayStart={1.5}
-            />
-        </div>
+        <HeroCyclingContent client:only="react" />
     </section>
 </Layout>

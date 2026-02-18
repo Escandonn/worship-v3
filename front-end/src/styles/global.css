@@ -3,6 +3,10 @@
 
 @theme {
     --font-inter: "Inter", sans-serif;
+    --color-neon-green: #39FF14;
+    --color-neon-blue: #00F3FF;
+    --color-neon-purple: #BC13FE;
+    --color-neon-pink: #FF00E0;
 }
 
 :root {
