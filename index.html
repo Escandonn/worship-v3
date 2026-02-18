@@ -2,121 +2,169 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Antigravity Title</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hands Gravity Carousel</title>
   <style>
+    html,
     body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Inter", system-ui, sans-serif;
+      background: radial-gradient(circle at 50% 40%, #0f2027, #203a43, #2c5364);
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background: #0b0f19;
-      color: white;
-      font-family: sans-serif;
     }
 
-    .wrap {
-      text-align: center;
+    /* Hands */
+    .hand {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 70vh;
+      /* manos ocupan 40% del alto de pantalla */
+      width: auto;
+      /* mantiene proporción */
+      max-height: 520px;
+      pointer-events: none;
+      user-select: none;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .5));
     }
 
-    /* LOGO TRIANGULO */
-    .logo {
-      width: 0;
-      height: 0;
-      margin: 0 auto 24px;
-      border-left: 22px solid transparent;
-      border-right: 22px solid transparent;
-      border-bottom: 38px solid white;
-      opacity: 0;
-      transform: translateY(-30px);
-      animation: logoIn 1s ease forwards;
+    .hand.left {
+      left: -5vw;
     }
 
-    @keyframes logoIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .hand.right {
+      right: -5vw;
+      transform: translateY(-50%) scaleX(-1);
     }
 
-    h1,
-    p {
-      margin: 0;
+    /* Carousel column */
+    .carousel {
+      position: relative;
+      width: 120px;
+      height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
     }
 
-    h1 {
-      font-size: 52px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+    .icon {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .6s ease, opacity .6s ease;
     }
 
-    p {
-      font-size: 20px;
-      opacity: 0.85;
-      margin-top: 16px;
+    .icon img {
+      width: 70%;
+      height: 70%;
+      object-fit: contain;
+      pointer-events: none;
     }
 
-    .gravity-letter {
-      display: inline-block;
-      opacity: 0;
-      transform: translate(var(--x), var(--y)) rotate(var(--r));
-      filter: blur(6px);
-      animation: floatIn 1.1s cubic-bezier(.22, .9, .32, 1) forwards;
-    }
-
-    @keyframes floatIn {
-      to {
-        opacity: 1;
-        transform: translate(0, 0) rotate(0deg);
-        filter: blur(0);
-      }
+    /* subtle glow */
+    .icon::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 20px;
+      background: radial-gradient(circle, rgba(0, 150, 255, .35), transparent 70%);
+      opacity: .5;
+      z-index: -1;
     }
   </style>
 </head>
 
 <body>
+  <div class="scene">
+    <!-- Replace with your Adam/God hands images -->
+    <img class="hand left" src="adan.png" alt="Mano de Adán" />
+    <img class="hand right" src="Dios.png" alt="Mano de Dios" />
 
-  <div class="wrap">
-    <div class="logo"></div>
-    <h1 class="gravity">Diseño tipo Google Antigravity</h1>
-    <p class="gravity">Animación suave letra por letra</p>
+    <div class="carousel" id="carousel"></div>
   </div>
 
   <script>
-    function applyGravity(selector, delayStart = 0) {
-      document.querySelectorAll(selector).forEach(el => {
-        const text = el.textContent;
-        el.textContent = "";
+    const icons = [
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg"
+    ];
 
-        text.split("").forEach((char, i) => {
-          const span = document.createElement("span");
-          span.textContent = char;
+    const container = document.getElementById("carousel");
+    const items = [];
 
-          const x = (Math.random() - 0.5) * 300 + "px";
-          const y = (Math.random() - 0.5) * 200 + "px";
-          const r = (Math.random() - 0.5) * 60 + "deg";
+    icons.forEach((src, i) => {
+      const div = document.createElement("div");
+      div.className = "icon";
+      const img = document.createElement("img");
+      img.src = src;
+      div.appendChild(img);
+      container.appendChild(div);
+      items.push(div);
+    });
 
-          span.className = "gravity-letter";
-          span.style.setProperty("--x", x);
-          span.style.setProperty("--y", y);
-          span.style.setProperty("--r", r);
+    let offset = 0;
 
-          span.style.animationDelay = (delayStart + i * 0.05) + "s";
+    function layout() {
+      const h = container.clientHeight;
+      const center = h / 2;
+      const gap = 90;
 
-          el.appendChild(span);
-        });
+      items.forEach((el, i) => {
+        const pos = ((i + offset) % items.length);
+        const y = (pos - items.length / 2) * gap;
+        const dist = Math.abs(y);
+
+        const scale = 1 - Math.min(dist / 600, 0.6);
+        const opacity = 1 - Math.min(dist / 500, 0.8);
+
+        el.style.transform = `translateY(${y}px) scale(${scale}) rotateX(${y / 8}deg)`;
+        el.style.opacity = opacity;
+        el.style.zIndex = 100 - Math.floor(dist);
       });
     }
 
-    // título primero
-    applyGravity("h1.gravity", 0.3);
+    function tick() {
+      offset += 0.01; // speed
+      layout();
+      requestAnimationFrame(tick);
+    }
 
-    // subtítulo después
-    applyGravity("p.gravity", 1.2);
+    layout();
+    tick();
+
+    // optional mouse gravity tilt
+    document.addEventListener("mousemove", e => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      container.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+    });
   </script>
-
 </body>
 
 </html>

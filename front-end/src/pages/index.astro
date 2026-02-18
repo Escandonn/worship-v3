@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar";
 import ParticlesBackground from "../components/ParticlesBackground";
 import HeroCyclingContent from "../components/HeroCyclingContent";
+import HandsCarousel from "../components/HandsCarousel";
 import "../styles/global.css";
 ---
 
@@ -10,10 +11,22 @@ import "../styles/global.css";
     <Navbar client:load />
 
     <section
-        class="relative h-screen flex flex-col items-center justify-center pt-[72px] text-center px-6 overflow-hidden"
+        class="relative h-[80vh] md:h-screen flex flex-col items-center justify-center pt-[72px] text-center px-6 overflow-hidden"
     >
         <ParticlesBackground client:only="react" />
 
         <HeroCyclingContent client:only="react" />
+    </section>
+
+    <section
+        class="relative w-full flex items-center justify-center overflow-hidden"
+    >
+        {/* Ambient Transition Glow */}
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] bg-neon-green/3 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none"
+        >
+        </div>
+
+        <HandsCarousel client:load />
     </section>
 </Layout>

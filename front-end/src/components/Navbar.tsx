@@ -9,7 +9,7 @@ const Navbar = () => {
             <nav className="fixed top-0 left-0 w-full h-[72px] flex items-center justify-between px-6 md:px-12 backdrop-blur-[14px] bg-black/20 border-b border-white/5 z-1000">
                 <div className="flex items-center gap-3 font-semibold text-lg md:text-xl tracking-tight">
                     <div className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(57,255,20,0.2)] overflow-hidden">
-                        <div className="w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[12px] border-b-neon-green"></div>
+                        <div className="w-0 h-0 border-l-7 border-l-transparent border-r-7 border-r-transparent border-b-12 border-b-neon-green"></div>
                     </div>
                     <div className="flex items-center cursor-default">
                         <span className="text-white">worship</span>
