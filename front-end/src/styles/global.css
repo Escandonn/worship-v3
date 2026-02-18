@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --font-inter: "Inter", sans-serif;
+}
+
+:root {
+    --bg-gradient: radial-gradient(circle at 20% 20%, #5b8cff, transparent 40%),
+        radial-gradient(circle at 80% 30%, #ff6ec7, transparent 40%),
+        radial-gradient(circle at 40% 80%, #6effb0, transparent 40%),
+        #0b0f19;
+}
+
+body {
+    font-family: var(--font-inter);
+    background: var(--bg-gradient);
+    color: white;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+@keyframes floatIn {
+    to {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg);
+        filter: blur(0);
+    }
+}
+
+@keyframes logoIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gravity-letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) rotate(var(--r));
+    filter: blur(6px);
+    animation: floatIn 1.1s cubic-bezier(.22, .9, .32, 1) forwards;
+}
+
+.animate-logo {
+    opacity: 0;
+    transform: translateY(-30px);
+    animation: logoIn 1s ease forwards;
+}
