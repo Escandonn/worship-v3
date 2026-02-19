@@ -1,33 +1,56 @@
 import React, { useEffect, useState, useRef } from 'react';
 
+const GlobeIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="2" y1="12" x2="22" y2="12" />
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+);
+
+const MobileIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
+        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+        <line x1="12" y1="18" x2="12.01" y2="18" />
+    </svg>
+);
+
+const LayersIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
+        <polygon points="12 2 2 7 12 12 22 7 12 2" />
+        <polyline points="2 17 12 22 22 17" />
+        <polyline points="2 12 12 17 22 12" />
+    </svg>
+);
+
 const cards = [
     {
         id: 'card1',
         tag: 'SOLUTIONS',
-        icon: '🌐',
+        icon: <GlobeIcon />,
         title: 'Ecosistema Web',
         desc: 'Desarrollamos plataformas escalables de alto rendimiento con arquitecturas modernas, garantizando una presencia digital robusta y segura para tu negocio.',
-        pos: 'left-1/2 top-[5%] md:top-[10%]',
+        pos: 'left-1/2 top-[2%] md:top-[10%]',
         rotate: 'md:rotate-y-[-18deg] md:rotate-x-[6deg]',
         accent: 'from-blue-500/20'
     },
     {
         id: 'card2',
         tag: 'ENGINEERING',
-        icon: '📱',
+        icon: <MobileIcon />,
         title: 'Arquitectura Mobile',
         desc: 'Diseñamos experiencias nativas y multiplataforma que rompen los límites de lo convencional, priorizando la fluidez y la retención de usuarios en cada interacción.',
-        pos: 'left-1/2 top-[35%] md:top-[45%]',
+        pos: 'left-1/2 top-[32%] md:top-[45%]',
         rotate: 'md:rotate-y-[-10deg] md:rotate-x-[4deg]',
         accent: 'from-purple-500/20'
     },
     {
         id: 'card3',
         tag: 'SYSTEMS',
-        icon: '⚙️',
+        icon: <LayersIcon />,
         title: 'Core Empresarial',
         desc: 'Optimizamos la infraestructura crítica de tu empresa con soluciones de software personalizadas que integran procesos y potencian la eficiencia operativa.',
-        pos: 'left-1/2 top-[65%] md:top-[15%]',
+        pos: 'left-1/2 top-[62%] md:top-[15%]',
         rotate: 'md:rotate-y-[14deg] md:rotate-x-[6deg]',
         accent: 'from-neon-green/20'
     },
@@ -157,7 +180,7 @@ const ConnectedCards: React.FC = () => {
     }, []);
 
     return (
-        <div ref={containerRef} className="relative w-full max-w-6xl h-[1200px] md:h-[700px] mx-auto perspective-[1600px] px-4 md:px-0">
+        <div ref={containerRef} className="relative w-full max-w-6xl h-[1600px] md:h-[850px] mx-auto perspective-[1600px] px-4 md:px-0">
             {/* SVG Connection Layer */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
                 <defs>
@@ -248,10 +271,9 @@ const ConnectedCards: React.FC = () => {
                     <div
                         key={card.id}
                         ref={(el) => { cardRefs.current[card.id] = el; }}
-                        className={`absolute p-8 md:p-10 w-[280px] sm:w-[320px] md:w-[380px] rounded-[30px] bg-linear-to-b from-[#0b1220] via-[#0b1220] to-[#0f172a] border transition-all duration-700 ease-out transform-gpu overflow-hidden ${card.pos} ${card.rotate} ${visibleCards.includes(card.id) ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}
+                        className={`absolute p-8 md:p-10 w-[280px] sm:w-[320px] md:w-[380px] rounded-[32px] bg-linear-to-b from-[#0b1220] via-[#0b1220] to-[#040812] border border-white/10 transition-all duration-700 ease-out transform-gpu overflow-hidden ${card.pos} ${card.rotate} ${visibleCards.includes(card.id) ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}
                         style={{
-                            borderColor: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)',
-                            boxShadow: `0 30px 100px rgba(0,0,0,0.6), 0 0 40px ${focusGlow}`,
+                            boxShadow: `0 40px 120px rgba(0,0,0,0.8), 0 0 60px ${focusGlow}`,
                             filter: `blur(${blurAmount}px) grayscale(${grayscaleAmount})`,
                             opacity: visibleCards.includes(card.id) ? (isMoving ? (isActive ? 1 : 0.7) : 1) : 0,
                             transformStyle: 'preserve-3d',
@@ -266,7 +288,7 @@ const ConnectedCards: React.FC = () => {
                         }}
                     >
                         {/* Interior Gradient Glow */}
-                        <div className={`absolute inset-0 bg-linear-to-br ${card.accent} to-transparent opacity-10 rounded-[30px] pointer-events-none`} />
+                        <div className={`absolute inset-0 bg-linear-to-br ${card.accent} to-transparent opacity-10 rounded-[32px] pointer-events-none`} />
 
                         {/* Holographic Shimmer Effect */}
                         <div
@@ -280,28 +302,90 @@ const ConnectedCards: React.FC = () => {
                         />
 
                         {/* Card Tag */}
-                        <div className={`absolute top-8 right-8 text-[10px] font-bold tracking-[0.2em] uppercase transform translate-z-[30px] transition-all duration-500 ${isMoving ? (isActive ? 'text-white/60' : 'text-white/20') : 'text-white/60'}`}>
+                        <div className={`absolute top-10 right-10 text-[11px] font-black tracking-[0.3em] uppercase transform translate-z-[30px] transition-all duration-500 ${isMoving ? (isActive ? 'text-blue-400' : 'text-white/20') : 'text-blue-400/80'}`}>
                             {card.tag}
                         </div>
 
-                        {/* Edge Glow (Brushed Look) */}
-                        <div className="absolute -inset-px rounded-inherit bg-linear-to-br from-white/10 via-transparent to-white/5 blur-[1px] -z-10" />
+                        {/* Edge Highlight */}
+                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent z-20 pointer-events-none" />
 
-                        <div className={`text-4xl md:text-5xl mb-6 transform translate-z-[80px] drop-shadow-2xl transition-all duration-500 ${isMoving ? (isActive ? 'grayscale-0 scale-110' : 'grayscale-[0.8] opacity-60') : 'grayscale-0 opacity-100 scale-100'}`}>{card.icon}</div>
+                        {/* Icon Container */}
+                        <div className={`w-14 h-14 md:w-16 md:h-16 mb-8 transform translate-z-[90px] transition-all duration-500 ${isMoving ? (isActive ? 'text-white scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]' : 'text-white/30 grayscale opacity-60') : 'text-white opacity-100 grayscale-0 scale-100'}`}>
+                            {card.icon}
+                        </div>
 
-                        <h3 className={`text-white text-xl md:text-2xl font-bold mb-4 transform translate-z-[60px] tracking-tight leading-tight transition-all duration-500 ${isMoving ? (isActive ? 'opacity-100' : 'opacity-70') : 'opacity-100'}`}>
-                            {card.title}
+                        <h3 className={`text-3xl md:text-4xl font-black mb-6 transform translate-z-[70px] tracking-tighter leading-none transition-all duration-500 uppercase bg-linear-to-br from-white via-white to-white/40 bg-clip-text text-transparent ${isMoving ? (isActive ? 'opacity-100' : 'opacity-60') : 'opacity-100'}`}>
+                            {card.title.split(' ').map((word, i) => (
+                                <React.Fragment key={i}>
+                                    {word}<br />
+                                </React.Fragment>
+                            ))}
                         </h3>
 
-                        <p className={`text-gray-400 text-xs md:text-sm lg:text-base leading-relaxed transform translate-z-[40px] font-light transition-all duration-500 ${isMoving ? (isActive ? 'opacity-100' : 'opacity-50') : 'opacity-100'}`}>
+                        <p className={`text-gray-400 text-sm md:text-base leading-relaxed transform translate-z-[40px] font-normal transition-all duration-500 max-w-[90%] ${isMoving ? (isActive ? 'opacity-100' : 'opacity-40') : 'opacity-100'}`}>
                             {card.desc}
                         </p>
 
                         {/* Bottom Line Accent */}
-                        <div className={`absolute bottom-0 left-10 right-10 h-px transition-all duration-700 ${isActive ? 'bg-linear-to-r from-transparent via-white/40 to-transparent scale-x-110' : 'bg-linear-to-r from-transparent via-white/10 to-transparent opacity-50'}`} />
+                        <div className={`absolute bottom-0 left-0 right-0 h-[2px] transition-all duration-700 ${isActive ? 'bg-linear-to-r from-transparent via-blue-500/40 to-transparent scale-x-100' : 'bg-linear-to-r from-transparent via-white/5 to-transparent'}`} />
                     </div>
                 );
             })}
+
+            {/* SoundWave Visual Effect */}
+            <div className="absolute bottom-4 md:bottom-2 left-0 right-0 h-40 pointer-events-none z-10 overflow-hidden">
+                <svg className="w-full h-full preserve-3d" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="wave-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="transparent" />
+                            <stop offset="50%" stopColor="currentColor" />
+                            <stop offset="100%" stopColor="transparent" />
+                        </linearGradient>
+                    </defs>
+
+                    {/* Core "Auditory" Wave */}
+                    <path
+                        className={`transition-colors duration-1000 ${scrollDirection === 'up' ? 'text-cyan-400' : 'text-[#FFD700]'}`}
+                        fill="none"
+                        stroke="url(#wave-gradient)"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        style={{
+                            filter: `drop-shadow(0 0 20px ${scrollDirection === 'up' ? '#22d3ee' : '#FFD700'})`,
+                            opacity: isMoving ? 0.9 : 0.4,
+                        }}
+                        d={Array.from({ length: 151 }).map((_, i) => {
+                            const x = i * 8;
+                            // High frequency loop + base jitter
+                            const baseFreq = 0.05 + (velocity.current * 0.1);
+                            const noise = Math.sin(i * 0.5 + Date.now() * 0.01) * 5; // Jittery loop
+                            const amplitude = (isMoving ? 40 : 15) + (velocity.current * 50);
+                            const phase = scrollProgress * 15 + (Date.now() * 0.004);
+                            const y = 60 + Math.sin(i * baseFreq + phase) * amplitude + noise;
+                            return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                        }).join(' ')}
+                    />
+
+                    {/* Secondary High-Frequency Analyzer Wave */}
+                    <path
+                        className={`transition-colors duration-1000 ${scrollDirection === 'up' ? 'text-cyan-500/40' : 'text-[#FFD700]/40'}`}
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                        style={{
+                            opacity: isMoving ? 0.6 : 0.2,
+                        }}
+                        d={Array.from({ length: 151 }).map((_, i) => {
+                            const x = i * 8;
+                            const frequency = 0.1 + (velocity.current * 0.2); // Extremely high for analyzer look
+                            const amplitude = (isMoving ? 15 : 5) + (velocity.current * 20);
+                            const phase = -scrollProgress * 12 + (Date.now() * 0.008);
+                            const y = 60 + Math.cos(i * frequency + phase) * amplitude * Math.sin(i * 0.1);
+                            return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                        }).join(' ')}
+                    />
+                </svg>
+            </div>
         </div>
     );
 };

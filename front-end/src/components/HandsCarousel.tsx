@@ -110,7 +110,7 @@ const HandsCarousel: React.FC = () => {
     };
 
     return (
-        <div ref={containerRef} className="relative w-full h-[30vh] md:h-[50vh] flex flex-col items-center justify-center pointer-events-none overflow-hidden">
+        <div ref={containerRef} className="relative w-full h-[20vh] md:h-[50vh] flex flex-col items-center justify-center pointer-events-none overflow-hidden">
             {/* Title */}
             <div className="absolute top-4 md:top-8 w-full text-center z-20 px-4">
                 <h2 className="text-xl md:text-3xl font-bold tracking-tighter text-white/90 drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]">
