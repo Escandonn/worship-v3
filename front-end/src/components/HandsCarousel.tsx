@@ -19,6 +19,9 @@ const HandsCarousel: React.FC = () => {
     const [offset, setOffset] = useState(0);
     const [tilt, setTilt] = useState({ x: 0, y: 0 });
     const [showHands, setShowHands] = useState(false);
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
+    const lastScrollY = useRef(0);
 
     useEffect(() => {
         let animationFrameId: number;
@@ -28,6 +31,27 @@ const HandsCarousel: React.FC = () => {
         };
         tick();
         return () => cancelAnimationFrame(animationFrameId);
+    }, []);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!containerRef.current) return;
+            const currentScrollY = window.scrollY;
+            const direction = currentScrollY > lastScrollY.current ? 'down' : 'up';
+            lastScrollY.current = currentScrollY;
+            setScrollDirection(direction);
+
+            const rect = containerRef.current.getBoundingClientRect();
+            const viewHeight = window.innerHeight;
+
+            // Calculate progress: 0 when top is at bottom of viewport, 1 when bottom is at top of viewport
+            const progress = 1 - (rect.top + rect.height) / (viewHeight + rect.height);
+            setScrollProgress(Math.max(0, Math.min(1, progress)));
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Initial check
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     useEffect(() => {
@@ -72,7 +96,7 @@ const HandsCarousel: React.FC = () => {
             return (
                 <div
                     key={i}
-                    className="absolute w-16 h-16 md:w-24 md:h-24 flex items-center justify-center transition-all duration-300 ease-out before:content-[''] before:absolute before:-inset-2 before:rounded-3xl before:bg-[radial-gradient(circle,_rgba(57,255,20,0.2),_transparent_70%)] before:opacity-50 before:-z-10"
+                    className="absolute w-16 h-16 md:w-24 md:h-24 flex items-center justify-center transition-all duration-300 ease-out before:content-[''] before:absolute before:-inset-2 before:rounded-3xl before:bg-[radial-gradient(circle,rgba(57,255,20,0.2),transparent_70%)] before:opacity-50 before:-z-10"
                     style={{
                         transform: `translateY(${y}px) scale(${scale}) rotateX(${y / 8}deg)`,
                         opacity: opacity,
@@ -98,10 +122,12 @@ const HandsCarousel: React.FC = () => {
             <img
                 src={adanImg.src}
                 alt="Mano de Adán"
-                className={`absolute left-[-5vw] top-[100%] -translate-y-1/2 h-[20vh] md:h-[55vh] max-h-[400px] md:max-h-none w-auto pointer-events-none select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-all duration-1000 ease-out ${showHands ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'}`}
+                className={`absolute left-[-5vw] top-[100%] -translate-y-1/2 h-[20vh] md:h-[55vh] max-h-[400px] md:max-h-none w-auto pointer-events-none select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-all duration-700 ease-out ${showHands ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'}`}
                 style={{
                     transform: showHands
-                        ? `translateY(calc(-50% + ${tilt.y * 0.5}px)) translateX(${tilt.x * 0.2}px)`
+                        ? `translateY(calc(-50% + ${tilt.y * 0.5 + (scrollProgress - 0.5) * 100}px)) 
+                           translateX(${tilt.x * 0.2 + (scrollDirection === 'down' ? -20 : 20)}px)
+                           rotate(${scrollDirection === 'down' ? 5 : -5}deg)`
                         : 'translateY(-50%) translateX(-100%)'
                 }}
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -111,10 +137,13 @@ const HandsCarousel: React.FC = () => {
             <img
                 src={godImg.src}
                 alt="Mano de Dios"
-                className={`absolute right-[-5vw] top-[100%] -translate-y-1/2 h-[20vh] md:h-[55vh] max-h-[400px] md:max-h-none w-auto pointer-events-none select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] scale-x-[-1] transition-all duration-1000 ease-out delay-100 ${showHands ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'}`}
+                className={`absolute right-[-5vw] top-[100%] -translate-y-1/2 h-[20vh] md:h-[55vh] max-h-[400px] md:max-h-none w-auto pointer-events-none select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] scale-x-[-1] transition-all duration-700 ease-out delay-100 ${showHands ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'}`}
                 style={{
                     transform: showHands
-                        ? `translateY(calc(-50% + ${tilt.y * 0.5}px)) translateX(${-tilt.x * 0.2}px) scaleX(-1)`
+                        ? `translateY(calc(-50% + ${tilt.y * 0.5 + (scrollProgress - 0.5) * -100}px)) 
+                           translateX(${-tilt.x * 0.2 + (scrollDirection === 'down' ? 20 : -20)}px) 
+                           scaleX(-1) 
+                           rotate(${scrollDirection === 'down' ? -5 : 5}deg)`
                         : 'translateY(-50%) translateX(100%) scaleX(-1)'
                 }}
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}

@@ -4,167 +4,285 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hands Gravity Carousel</title>
+  <title>Cards Conectadas</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    html,
+    :root {
+      --bg1: #0b0f19;
+      --bg2: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
     body {
       margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-family: "Inter", system-ui, sans-serif;
-      background: radial-gradient(circle at 50% 40%, #0f2027, #203a43, #2c5364);
+      background:
+        radial-gradient(800px 400px at 30% 20%, #1e3a8a33, transparent),
+        radial-gradient(700px 400px at 80% 80%, #9333ea33, transparent),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow: hidden;
+      color: var(--text);
+      perspective: 1600px;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
     }
 
     .scene {
       position: relative;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 1200px;
+      height: 520px;
     }
 
-    /* Hands */
-    .hand {
+    .card {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 70vh;
-      /* manos ocupan 40% del alto de pantalla */
-      width: auto;
-      /* mantiene proporción */
-      max-height: 520px;
-      pointer-events: none;
-      user-select: none;
-      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .5));
+      width: 380px;
+      padding: 38px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, #0b1220, #0f172a);
+      border: 1px solid #1f2937;
+      box-shadow: 0 50px 140px #000000aa;
+      backdrop-filter: blur(18px);
+      transform-style: preserve-3d;
+      opacity: 0;
     }
 
-    .hand.left {
-      left: -5vw;
-    }
-
-    .hand.right {
-      right: -5vw;
-      transform: translateY(-50%) scaleX(-1);
-    }
-
-    /* Carousel column */
-    .carousel {
-      position: relative;
-      width: 120px;
-      height: 70vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      perspective: 1000px;
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(120deg, transparent, #7c3aed66, transparent);
+      filter: blur(6px);
+      z-index: -1;
     }
 
     .icon {
-      position: absolute;
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform .6s ease, opacity .6s ease;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 20px 40px #00000066;
+      font-size: 28px;
+      transform: translateZ(50px);
     }
 
-    .icon img {
-      width: 70%;
-      height: 70%;
-      object-fit: contain;
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.35rem;
+      transform: translateZ(40px)
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      transform: translateZ(30px)
+    }
+
+    #card1 {
+      left: 0;
+      top: 60px;
+      transform: rotateY(-18deg) rotateX(6deg) translateZ(40px)
+    }
+
+    #card2 {
+      left: 420px;
+      top: 220px;
+      transform: rotateY(-10deg) rotateX(4deg) translateZ(30px)
+    }
+
+    #card3 {
+      right: 0;
+      top: 40px;
+      transform: rotateY(14deg) rotateX(6deg) translateZ(40px)
+    }
+
+    .show {
+      animation: fadeIn 1s ease forwards
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(.95)
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
     }
 
-    /* subtle glow */
-    .icon::after {
-      content: "";
-      position: absolute;
-      inset: -6px;
-      border-radius: 20px;
-      background: radial-gradient(circle, rgba(0, 150, 255, .35), transparent 70%);
-      opacity: .5;
-      z-index: -1;
+    .line {
+      fill: none;
+      stroke: #60a5fa;
+      stroke-width: 3;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 8px #60a5fa) drop-shadow(0 0 16px #60a5fa) drop-shadow(0 0 32px #60a5fa);
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      transition: stroke-dashoffset 1.2s ease;
     }
   </style>
 </head>
 
 <body>
-  <div class="scene">
-    <!-- Replace with your Adam/God hands images -->
-    <img class="hand left" src="adan.png" alt="Mano de Adán" />
-    <img class="hand right" src="Dios.png" alt="Mano de Dios" />
 
-    <div class="carousel" id="carousel"></div>
+  <canvas id="bg"></canvas>
+
+  <div class="scene">
+
+    <svg>
+      <defs>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <path id="path" class="line" />
+
+      <circle id="pulse" r="6" fill="#a5b4fc" filter="url(#glow)" opacity="0">
+        <animateMotion dur="2.4s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#path" />
+        </animateMotion>
+      </circle>
+    </svg>
+
+    <div class="card" id="card1">
+      <div class="icon">🌐</div>
+      <h3>Web</h3>
+      <p>Plataformas modernas.</p>
+    </div>
+
+    <div class="card" id="card2">
+      <div class="icon">📱</div>
+      <h3>Apps</h3>
+      <p>Experiencias móviles.</p>
+    </div>
+
+    <div class="card" id="card3">
+      <div class="icon">⚙️</div>
+      <h3>Sistemas</h3>
+      <p>Software empresarial.</p>
+    </div>
+
   </div>
 
   <script>
-    const icons = [
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg"
-    ];
+    // ===== partículas =====
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
 
-    const container = document.getElementById("carousel");
-    const items = [];
+    function resize() {
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+    }
+    addEventListener('resize', resize);
+    resize();
 
-    icons.forEach((src, i) => {
-      const div = document.createElement("div");
-      div.className = "icon";
-      const img = document.createElement("img");
-      img.src = src;
-      div.appendChild(img);
-      container.appendChild(div);
-      items.push(div);
-    });
-
-    let offset = 0;
-
-    function layout() {
-      const h = container.clientHeight;
-      const center = h / 2;
-      const gap = 90;
-
-      items.forEach((el, i) => {
-        const pos = ((i + offset) % items.length);
-        const y = (pos - items.length / 2) * gap;
-        const dist = Math.abs(y);
-
-        const scale = 1 - Math.min(dist / 600, 0.6);
-        const opacity = 1 - Math.min(dist / 500, 0.8);
-
-        el.style.transform = `translateY(${y}px) scale(${scale}) rotateX(${y / 8}deg)`;
-        el.style.opacity = opacity;
-        el.style.zIndex = 100 - Math.floor(dist);
-      });
+    class P {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.15;
+        this.vy = (Math.random() - 0.5) * 0.15;
+        this.s = Math.random() * 2 + 0.5;
+      }
+      move() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
+        ctx.fill();
+      }
     }
 
-    function tick() {
-      offset += 0.01; // speed
-      layout();
-      requestAnimationFrame(tick);
+    for (let i = 0; i < 100; i++)particles.push(new P());
+
+    (function anim() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.move(); p.draw() });
+      requestAnimationFrame(anim);
+    })();
+
+    // ===== conexión cards =====
+    const c1 = document.getElementById('card1');
+    const c2 = document.getElementById('card2');
+    const c3 = document.getElementById('card3');
+    const path = document.getElementById('path');
+    const pulse = document.getElementById('pulse');
+    const scene = document.querySelector('.scene');
+
+    function center(el) {
+      const r = el.getBoundingClientRect();
+      const s = scene.getBoundingClientRect();
+      return {
+        x: r.left + r.width / 2 - s.left,
+        y: r.top + r.height / 2 - s.top
+      };
     }
 
-    layout();
-    tick();
+    function drawLine() {
+      const p1 = center(c1);
+      const p2 = center(c2);
+      const p3 = center(c3);
 
-    // optional mouse gravity tilt
-    document.addEventListener("mousemove", e => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20;
-      const y = (e.clientY / window.innerHeight - 0.5) * 20;
-      container.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-    });
+      const d = `M ${p1.x} ${p1.y} Q ${p2.x} ${p2.y} ${p3.x} ${p3.y}`;
+      path.setAttribute('d', d);
+
+      path.getBoundingClientRect();
+      path.style.strokeDashoffset = 0;
+
+      pulse.style.opacity = 1;
+    }
+
+    // aparición secuencial
+    setTimeout(() => c1.classList.add('show'), 300);
+    setTimeout(() => c2.classList.add('show'), 900);
+    setTimeout(() => {
+      c3.classList.add('show');
+      setTimeout(drawLine, 400);
+    }, 1500);
   </script>
+
 </body>
 
 </html>
