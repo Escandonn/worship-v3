@@ -184,7 +184,7 @@ const ConnectedCards: React.FC = () => {
     const currentTimeForWave = isMounted ? Date.now() : 0;
 
     return (
-        <div ref={containerRef} className="relative w-full max-w-6xl h-[1600px] md:h-[850px] mx-auto perspective-[1600px] px-4 md:px-0">
+        <div id="productos" ref={containerRef} className="relative w-full max-w-6xl h-[1600px] md:h-[850px] mx-auto perspective-[1600px] px-4 md:px-0">
             {/* SVG Connection Layer */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
                 <defs>

@@ -42,35 +42,28 @@ const MainFooter: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Main Footer Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-16 border-t border-white/10">
+                {/* Main Footer Grid — Quotes */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-16 border-t border-white/10">
                     <div>
-                        <h4 className="text-[11px] font-black tracking-[0.4em] uppercase text-white mb-8">Soluciones</h4>
-                        <ul className="space-y-4 text-sm font-medium text-white/50">
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Ecosistema Web</a></li>
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Arquitectura Mobile</a></li>
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Core Empresarial</a></li>
+                        <span className="text-[10px] font-black tracking-[0.4em] uppercase text-neon-blue mb-6 block">Visión</span>
+                        <ul className="space-y-6 text-sm text-white/50">
+                            <li className="leading-relaxed italic">"El mejor marketing no se siente como marketing." <span className="not-italic font-bold text-white/30 block mt-1">— Tom Fishburne</span></li>
+                            <li className="leading-relaxed italic">"La simplicidad es la máxima sofisticación." <span className="not-italic font-bold text-white/30 block mt-1">— Leonardo da Vinci</span></li>
                         </ul>
                     </div>
                     <div>
-                        <h4 className="text-[11px] font-black tracking-[0.4em] uppercase text-white mb-8">Empresa</h4>
-                        <ul className="space-y-4 text-sm font-medium text-white/50">
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Sobre Nosotros</a></li>
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Procesos</a></li>
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Contacto</a></li>
+                        <span className="text-[10px] font-black tracking-[0.4em] uppercase text-neon-blue mb-6 block">Estrategia</span>
+                        <ul className="space-y-6 text-sm text-white/50">
+                            <li className="leading-relaxed italic">"El software se está comiendo al mundo." <span className="not-italic font-bold text-white/30 block mt-1">— Marc Andreessen</span></li>
+                            <li className="leading-relaxed italic">"Muévete rápido y construye cosas." <span className="not-italic font-bold text-white/30 block mt-1">— Reid Hoffman</span></li>
                         </ul>
                     </div>
                     <div>
-                        <h4 className="text-[11px] font-black tracking-[0.4em] uppercase text-white mb-8">Recursos</h4>
-                        <ul className="space-y-4 text-sm font-medium text-white/50">
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Blog</a></li>
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Documentación</a></li>
-                            <li><a href="#" className="hover:text-neon-blue transition-colors">Media Kit</a></li>
+                        <span className="text-[10px] font-black tracking-[0.4em] uppercase text-neon-blue mb-6 block">Ejecución</span>
+                        <ul className="space-y-6 text-sm text-white/50">
+                            <li className="leading-relaxed italic">"Ideas sin ejecución son solo alucinaciones." <span className="not-italic font-bold text-white/30 block mt-1">— Thomas Edison</span></li>
+                            <li className="leading-relaxed italic">"Tu marca es lo que la gente dice cuando no estás en la sala." <span className="not-italic font-bold text-white/30 block mt-1">— Jeff Bezos</span></li>
                         </ul>
-                    </div>
-                    <div className="flex flex-col justify-end items-start md:items-end">
-                        <div className="w-24 h-1 bg-white mb-4" />
-                        <span className="text-white/20 text-[10px] font-black tracking-[0.5em] uppercase">Built with Intention</span>
                     </div>
                 </div>
             </div>

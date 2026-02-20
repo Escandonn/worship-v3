@@ -143,7 +143,7 @@ const PricingSection: React.FC = () => {
     return (
         <section
             ref={sectionRef}
-            id="pricing-premium"
+            id="precios"
             className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent"
         >
             {/* Background Layer: Removed custom gradient to use Astro's symmetrical background */}

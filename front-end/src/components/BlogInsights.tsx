@@ -32,7 +32,7 @@ const ebooks = [
 
 const BlogInsights: React.FC = () => {
     return (
-        <section className="relative w-full py-40 px-6 overflow-hidden bg-transparent">
+        <section id="docs" className="relative w-full py-40 px-6 overflow-hidden bg-transparent">
             {/* Background Texture / Grid */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
                 style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
