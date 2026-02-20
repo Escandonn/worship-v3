@@ -18,9 +18,14 @@ const MainFooter: React.FC = () => {
                         <p className="text-white/60 text-lg md:text-xl font-medium max-w-lg mb-10">
                             Construimos la infraestructura digital que tu empresa necesita para escalar sin límites.
                         </p>
-                        <button className="px-10 py-5 bg-white text-black font-black uppercase tracking-widest rounded-full hover:bg-neon-blue hover:text-black transition-all duration-500 shadow-[0_20px_50px_rgba(255,255,255,0.1)] hover:shadow-[0_20px_50px_rgba(0,243,255,0.3)] transform hover:scale-105">
+                        <a
+                            href="https://wa.me/573172474295"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block px-10 py-5 bg-white text-black font-black uppercase tracking-widest rounded-full hover:bg-neon-blue hover:text-black transition-all duration-500 shadow-[0_20px_50px_rgba(255,255,255,0.1)] hover:shadow-[0_20px_50px_rgba(0,243,255,0.3)] transform hover:scale-105"
+                        >
                             Comenzar Proyecto
-                        </button>
+                        </a>
                     </div>
 
                     <div className="flex flex-col items-center md:items-end gap-6">

@@ -12,33 +12,35 @@ interface PricingPlan {
     accent: string;
 }
 
+const WHATSAPP_URL = "https://wa.me/573172474295";
+
 const plans: PricingPlan[] = [
     {
-        name: "Starter",
-        price: "0",
-        period: "mo",
-        description: "Para proyectos personales y experimentación.",
-        features: ["3 proyectos activos", "Soporte comunitario", "1GB de almacenamiento"],
-        buttonText: "Empezar Gratis",
+        name: "Páginas Web",
+        price: "$800K – $1.2M",
+        period: "COP",
+        description: "Sitio web profesional, moderno y optimizado para tu negocio.",
+        features: ["Diseño personalizado", "Responsive & SEO", "Cambios constantes y renovación"],
+        buttonText: "Habla con nosotros",
         accent: "rgba(57, 255, 20, 0.4)" // Neon Green
     },
     {
-        name: "Pro",
-        price: "29",
-        period: "mo",
-        description: "Potencia tu negocio con herramientas avanzadas.",
-        features: ["Proyectos ilimitados", "Soporte prioritario 24/7", "10GB de almacenamiento", "Analytics avanzado"],
-        buttonText: "Obtener Pro",
+        name: "App Móvil",
+        price: "$2M – $3M",
+        period: "COP",
+        description: "Aplicación móvil a medida para iOS y Android.",
+        features: ["iOS & Android nativo", "Diseño UI/UX premium", "Integraciones API", "Soporte técnico"],
+        buttonText: "Habla con nosotros",
         isPopular: true,
         accent: "rgba(0, 243, 255, 0.4)" // Neon Blue
     },
     {
-        name: "Enterprise",
-        price: "Custom",
+        name: "Software Empresarial",
+        price: "Consultar",
         period: "",
-        description: "Soluciones a medida para grandes organizaciones.",
-        features: ["Infraestructura dedicada", "SLA garantizado", "Account Manager", "Seguridad avanzada"],
-        buttonText: "Contactar Ventas",
+        description: "Soluciones a medida para empresas con necesidades complejas.",
+        features: ["Sistema a medida", "Integraciones empresariales", "Soporte dedicado", "Escalabilidad garantizada"],
+        buttonText: "Habla con nosotros",
         accent: "rgba(188, 19, 254, 0.4)" // Neon Purple
     }
 ];
@@ -306,8 +308,8 @@ const PricingCard: React.FC<{
 
             <h3 className="text-xl font-black mb-1 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-300">{plan.name}</h3>
             <div className="flex items-baseline mb-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]">
-                <span className="text-4xl font-black text-white">{plan.price !== 'Custom' ? '$' : ''}{plan.price}</span>
-                {plan.period && <span className="text-white/60 font-bold ml-1">/{plan.period}</span>}
+                <span className="text-3xl font-black text-white">{plan.price}</span>
+                {plan.period && <span className="text-white/60 font-bold ml-1"> {plan.period}</span>}
             </div>
 
             <p className="text-sm text-white/80 mb-8 min-h-[40px] leading-relaxed drop-shadow-sm font-medium">
@@ -323,14 +325,17 @@ const PricingCard: React.FC<{
                 ))}
             </ul>
 
-            <button
-                className={`mt-auto w-full py-3.5 rounded-xl font-bold transition-all duration-300 relative overflow-hidden group/btn ${plan.isPopular
+            <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`mt-auto w-full py-3.5 rounded-xl font-bold transition-all duration-300 relative overflow-hidden group/btn text-center block ${plan.isPopular
                     ? 'bg-neon-blue text-black shadow-[0_0_20px_rgba(0,243,255,0.2)] hover:shadow-[0_0_30px_rgba(0,243,255,0.4)]'
                     : 'bg-white/5 text-white/90 border border-white/10 hover:bg-white/10 hover:border-white/20'
                     }`}
             >
                 {plan.buttonText}
-            </button>
+            </a>
         </div>
     );
 };
@@ -340,8 +345,8 @@ const MobilePricingCard: React.FC<{ plan: PricingPlan, isShining?: boolean }> = 
         <div className="w-[300px] p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-2xl flex flex-col items-center text-center shadow-2xl">
             <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
             <div className="flex items-baseline mb-4">
-                <span className="text-4xl font-black text-white">{plan.price !== 'Custom' ? '$' : ''}{plan.price}</span>
-                {plan.period && <span className="text-white/40 ml-1">/{plan.period}</span>}
+                <span className="text-2xl font-black text-white">{plan.price}</span>
+                {plan.period && <span className="text-white/40 ml-1"> {plan.period}</span>}
             </div>
             <p className="text-xs text-white/50 mb-6">{plan.description}</p>
             <ul className="w-full text-left space-y-3 mb-8">
@@ -352,12 +357,15 @@ const MobilePricingCard: React.FC<{ plan: PricingPlan, isShining?: boolean }> = 
                     </li>
                 ))}
             </ul>
-            <button
-                className={`w-full py-3 rounded-xl font-bold transition-all duration-300 ${plan.isPopular ? 'bg-neon-blue text-black' : 'bg-white/10 text-white border border-white/10'
+            <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`w-full py-3 rounded-xl font-bold transition-all duration-300 text-center block ${plan.isPopular ? 'bg-neon-blue text-black' : 'bg-white/10 text-white border border-white/10'
                     } ${isShining ? 'animate-button-shine' : ''}`}
             >
                 {plan.buttonText}
-            </button>
+            </a>
             <style>{`
                 @keyframes button-shine {
                     0% { box-shadow: 0 0 0px transparent; filter: brightness(1); }
