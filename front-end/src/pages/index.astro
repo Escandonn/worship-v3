@@ -6,6 +6,9 @@ import HeroCyclingContent from "../components/HeroCyclingContent";
 import HandsCarousel from "../components/HandsCarousel";
 import ConnectedCards from "../components/ConnectedCards";
 import Pricing from "../components/Pricing.astro";
+import TransitionTitle from "../components/TransitionTitle.astro";
+import MainFooter from "../components/MainFooter";
+import BlogInsights from "../components/BlogInsights";
 import "../styles/global.css";
 ---
 
@@ -44,8 +47,14 @@ import "../styles/global.css";
         class="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-0 pb-20 md:py-20"
     >
         <ParticlesBackground client:only="react" />
-        <ConnectedCards client:load />
+        <ConnectedCards client:only="react" />
     </section>
 
+    <TransitionTitle title="Innovación sin límites" />
+
     <Pricing />
+
+    <BlogInsights client:visible />
+
+    <MainFooter client:load />
 </Layout>

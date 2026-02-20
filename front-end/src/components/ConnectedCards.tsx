@@ -66,6 +66,7 @@ const ConnectedCards: React.FC = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [activeIndex, setActiveIndex] = useState(0);
     const [isMoving, setIsMoving] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const lastScrollY = useRef(0);
@@ -162,6 +163,7 @@ const ConnectedCards: React.FC = () => {
         };
 
         checkMobile();
+        setIsMounted(true);
         window.addEventListener('scroll', handleScroll, { passive: true });
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('resize', () => {
@@ -178,6 +180,8 @@ const ConnectedCards: React.FC = () => {
             if (scrollTimer.current) clearTimeout(scrollTimer.current as any);
         };
     }, []);
+
+    const currentTimeForWave = isMounted ? Date.now() : 0;
 
     return (
         <div ref={containerRef} className="relative w-full max-w-6xl h-[1600px] md:h-[850px] mx-auto perspective-[1600px] px-4 md:px-0">
@@ -358,9 +362,9 @@ const ConnectedCards: React.FC = () => {
                             const x = i * 8;
                             // High frequency loop + base jitter
                             const baseFreq = 0.05 + (velocity.current * 0.1);
-                            const noise = Math.sin(i * 0.5 + Date.now() * 0.01) * 5; // Jittery loop
+                            const noise = Math.sin(i * 0.5 + currentTimeForWave * 0.01) * 5; // Jittery loop
                             const amplitude = (isMoving ? 40 : 15) + (velocity.current * 50);
-                            const phase = scrollProgress * 15 + (Date.now() * 0.004);
+                            const phase = scrollProgress * 15 + (currentTimeForWave * 0.004);
                             const y = 60 + Math.sin(i * baseFreq + phase) * amplitude + noise;
                             return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
                         }).join(' ')}
@@ -379,7 +383,7 @@ const ConnectedCards: React.FC = () => {
                             const x = i * 8;
                             const frequency = 0.1 + (velocity.current * 0.2); // Extremely high for analyzer look
                             const amplitude = (isMoving ? 15 : 5) + (velocity.current * 20);
-                            const phase = -scrollProgress * 12 + (Date.now() * 0.008);
+                            const phase = -scrollProgress * 12 + (currentTimeForWave * 0.008);
                             const y = 60 + Math.cos(i * frequency + phase) * amplitude * Math.sin(i * 0.1);
                             return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
                         }).join(' ')}

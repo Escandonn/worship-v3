@@ -132,9 +132,10 @@ const PricingSection: React.FC = () => {
     const isInView = isIntersecting && scrollProgress > 0.1 && scrollProgress < 1.9;
 
     // Scale and recoil logic (Safe clamping)
-    const revealScale = isMounted ? Math.max(0, Math.min(1, scrollProgress * 1.5)) : 0;
-    const revealOpacity = isMounted ? Math.max(0, Math.min(1, (scrollProgress - 0.1) * 2)) : 0;
-    const recoilY = (isMounted && scrollDirection === 'up') ? Math.max(0, (1 - scrollProgress) * 50) : 0;
+    const safeProgress = Math.max(0, Math.min(1, scrollProgress));
+    const revealScale = isMounted ? Math.max(0.8, Math.min(1, safeProgress * 1.2)) : 0;
+    const revealOpacity = isMounted ? Math.max(0, Math.min(1, safeProgress * 2)) : 0;
+    const recoilY = (isMounted && scrollDirection === 'up') ? Math.max(0, (1 - safeProgress) * 50) : 0;
     const recoilScale = (isMounted && scrollDirection === 'up') ? Math.max(0.95, 1 - (1 - scrollProgress) * 0.05) : 1;
 
     return (

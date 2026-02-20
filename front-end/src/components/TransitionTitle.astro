@@ -1,0 +1,30 @@
+---
+import ParticlesBackground from "./ParticlesBackground";
+import TriangleMotionLogo from "./TriangleMotionLogo";
+
+interface Props {
+    title?: string;
+}
+
+const { title = "Impulsando el Futuro" } = Astro.props;
+---
+
+<section
+    class="relative w-full h-[50vh] flex items-center justify-center overflow-hidden px-6"
+>
+    <ParticlesBackground client:only="react" />
+
+    {/* Ambient Transition Glow - Top */}
+    <div
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-neon-green/5 blur-[100px] rounded-full -translate-y-1/2 pointer-events-none z-10"
+    >
+    </div>
+
+    <TriangleMotionLogo client:only="react" />
+
+    {/* Ambient Transition Glow - Bottom */}
+    <div
+        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[150px] bg-blue-500/5 blur-[80px] rounded-full translate-y-1/2 pointer-events-none z-10"
+    >
+    </div>
+</section>
