@@ -17,8 +17,13 @@ const AntigravityText: React.FC<AntigravityTextProps> = ({
 }) => {
     const Tag = tag;
     const letters = text.split("");
+    const [isMounted, setIsMounted] = React.useState(false);
 
-    // Memoize random values to prevent re-randomizing on re-renders
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    // Memoize random values
     const randomStats = React.useMemo(() => {
         return letters.map(() => ({
             x: (Math.random() - 0.5) * 300 + "px",
@@ -31,19 +36,19 @@ const AntigravityText: React.FC<AntigravityTextProps> = ({
         <Tag className={className}>
             {letters.map((char, i) => {
                 const stats = randomStats[i];
-                const delay = (delayStart + i * 0.05) + "s";
+                const delay = (delayStart + i * 0.05).toFixed(2) + "s";
 
                 return (
                     <span
                         key={i}
-                        className={`gravity-letter animate-[floatIn_1.1s_cubic-bezier(.22,.9,.32,1)_forwards] ${letterClassName}`}
-                        style={{
+                        className={`gravity-letter ${isMounted ? 'animate-[floatIn_1.1s_cubic-bezier(.22,.9,.32,1)_forwards]' : 'opacity-0'} ${letterClassName}`}
+                        style={isMounted ? {
                             // @ts-ignore
                             "--x": stats.x,
                             "--y": stats.y,
                             "--r": stats.r,
                             animationDelay: delay,
-                        } as React.CSSProperties}
+                        } : {}}
                     >
                         {char === " " ? "\u00A0" : char}
                     </span>

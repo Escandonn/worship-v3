@@ -5,6 +5,7 @@ import ParticlesBackground from "../components/ParticlesBackground";
 import HeroCyclingContent from "../components/HeroCyclingContent";
 import HandsCarousel from "../components/HandsCarousel";
 import ConnectedCards from "../components/ConnectedCards";
+import Pricing from "../components/Pricing.astro";
 import "../styles/global.css";
 ---
 
@@ -45,4 +46,6 @@ import "../styles/global.css";
         <ParticlesBackground client:only="react" />
         <ConnectedCards client:load />
     </section>
+
+    <Pricing />
 </Layout>
