@@ -61,7 +61,7 @@ const plans: PricingPlan[] = [
         totalPrice: "A medida",
         downPaymentPct: "40%",
         downPayment: "Primer pago",
-        remainder: "Saldo contado",
+        remainder: "Pago mensual",
         description: "Infraestructura de software diseñada para escalar con tus operaciones sin límites.",
         features: [
             "Arquitectura escalable",
@@ -190,7 +190,7 @@ const PricingSection: React.FC = () => {
                     <p className="text-white/50 text-sm md:text-base max-w-md mx-auto font-medium leading-relaxed">
                         Primer mes:{' '}
                         <span className="text-white/80 font-bold">30–40% del total.</span>{' '}
-                        El saldo restante, de contado.
+                        El saldo restante, mensual.
                     </p>
                 </div>
 
