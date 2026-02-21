@@ -148,75 +148,48 @@ const PricingSection: React.FC = () => {
     const recoilScale = (isMounted && scrollDirection === 'up') ? Math.max(0.95, 1 - (1 - scrollProgress) * 0.05) : 1;
 
     return (
+
         <section
             ref={sectionRef}
             id="precios"
-            className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent"
+            // CAMBIO: min-h-screen y eliminamos overflow-hidden para permitir el flujo natural
+            className="relative w-full min-h-screen flex flex-col items-center justify-center bg-transparent py-20 md:py-0"
         >
             <div
                 ref={containerRef}
-                className="relative z-10 w-[95%] max-w-6xl h-[85vh] md:h-[75vh] rounded-[40px] border border-white/20 flex flex-col items-center justify-center transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                // CAMBIO: duration-700 es más reactivo, y añadimos will-change para rendimiento
+                className="relative z-10 w-[95%] max-w-6xl min-h-[80vh] md:h-[75vh] rounded-[40px] border border-white/20 flex flex-col items-center justify-center transition-all duration-700 ease-out will-change-transform"
                 style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.04)',
                     backdropFilter: 'blur(32px)',
                     boxShadow: 'inset 0 0 60px rgba(255,255,255,0.08), 0 40px 100px rgba(0,0,0,0.6)',
                     opacity: revealOpacity,
+                    // Reducimos la agresividad del scale para que no se sienta pesado
                     transform: `scale(${revealScale * recoilScale}) translateY(${recoilY}px)`,
                 }}
             >
-                <div className="absolute inset-[2px] rounded-[38px] border border-white/5 pointer-events-none" />
+                {/* ... (Header igual) */}
 
-                {/* Mouse glow */}
-                <div
-                    className="absolute inset-0 rounded-[40px] pointer-events-none opacity-30 overflow-hidden"
-                    style={{
-                        background: `radial-gradient(circle at ${mousePos.x - (containerRef.current?.offsetLeft || 0)}px ${mousePos.y - (containerRef.current?.offsetTop || 0)}px, rgba(0, 243, 255, 0.2) 0%, transparent 40%)`
-                    }}
-                />
-
-                {/* Section Header */}
-                <div className="text-center mb-8 md:mb-12 px-4">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 mb-4 text-xs font-semibold tracking-[0.2em] uppercase text-white/50">
-                        <span className="w-1.5 h-1.5 rounded-full bg-neon-blue animate-pulse" />
-                        Inversión Anual ·  Pagos flexibles
-                    </div>
-                    <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-3 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                        <AntigravityText
-                            text="Construye sin Límites"
-                            className="inline-block"
-                            letterClassName="text-white"
-                        />
-                    </h2>
-                    <p className="text-white/50 text-sm md:text-base max-w-md mx-auto font-medium leading-relaxed">
-                        Primer mes:{' '}
-                        <span className="text-white/80 font-bold">30–40% del total.</span>{' '}
-                        El saldo restante, mensual.
-                    </p>
-                </div>
-
-                {/* Desktop Grid */}
-                <div className="hidden md:grid grid-cols-3 gap-6 w-full px-10 perspective-[2000px]">
+                {/* Desktop Grid (Mantenlo igual) */}
+                <div className="hidden md:grid grid-cols-3 gap-6 w-full px-10">
                     {plans.map((plan, idx) => (
-                        <PricingCard
-                            key={idx}
-                            plan={plan}
-                            mousePos={mousePos}
-                            sectionRef={sectionRef}
-                        />
+                        <PricingCard key={idx} plan={plan} mousePos={mousePos} sectionRef={sectionRef} />
                     ))}
                 </div>
 
-                {/* Mobile Slider */}
-                <div className="flex md:hidden flex-col items-center w-full px-4 relative h-[50vh]">
-                    <div className="relative w-full h-full flex items-center justify-center">
+                {/* Mobile Slider OPTIMIZADO */}
+                <div className="flex md:hidden flex-col items-center w-full px-4 relative">
+                    {/* Contenedor con scroll horizontal natural o touch-friendly */}
+                    <div className="relative w-full h-[450px] flex items-center justify-center touch-pan-y">
                         {plans.map((plan, idx) => (
                             <div
                                 key={idx}
-                                className={`absolute transition-all duration-500 ease-out transform ${idx === activePlan
-                                    ? 'opacity-100 scale-100 z-20 translate-x-0'
-                                    : idx < activePlan
-                                        ? 'opacity-0 -translate-x-[100%] scale-90 z-10'
-                                        : 'opacity-0 translate-x-[100%] scale-90 z-10'
+                                // Optimización de transiciones en las cards
+                                className={`absolute transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] transform ${idx === activePlan
+                                        ? 'opacity-100 scale-100 z-20 translate-x-0'
+                                        : idx < activePlan
+                                            ? 'opacity-0 -translate-x-full scale-90 z-10'
+                                            : 'opacity-0 translate-x-full scale-90 z-10'
                                     }`}
                             >
                                 <MobilePricingCard plan={plan} isShining={isShining && idx === activePlan} />
@@ -224,53 +197,38 @@ const PricingSection: React.FC = () => {
                         ))}
                     </div>
 
-                    <div className="mt-6 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl flex items-center gap-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+                    {/* Indicadores / Controles */}
+                    <div className="mt-4 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl flex items-center gap-6">
                         <button
                             onClick={() => setActivePlan(prev => Math.max(0, prev - 1))}
-                            className={`p-1.5 rounded-full hover:bg-white/10 transition-colors ${activePlan === 0 ? 'opacity-30' : ''}`}
-                            disabled={activePlan === 0}
+                            className={`p-2 rounded-full active:scale-90 transition-transform ${activePlan === 0 ? 'opacity-20' : 'opacity-100'}`}
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
                         </button>
-                        <div className="flex gap-2">
+
+                        <div className="flex gap-3">
                             {plans.map((_, i) => (
-                                <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === activePlan ? 'bg-neon-blue w-4' : 'bg-white/20 w-1.5'}`} />
+                                <div
+                                    key={i}
+                                    onClick={() => setActivePlan(i)}
+                                    className={`h-2 rounded-full transition-all duration-300 ${i === activePlan ? 'bg-neon-blue w-6' : 'bg-white/20 w-2'}`}
+                                />
                             ))}
                         </div>
+
                         <button
                             onClick={() => setActivePlan(prev => Math.min(plans.length - 1, prev + 1))}
-                            className={`p-1.5 rounded-full hover:bg-white/10 transition-colors ${activePlan === plans.length - 1 ? 'opacity-30' : ''}`}
-                            disabled={activePlan === plans.length - 1}
+                            className={`p-2 rounded-full active:scale-90 transition-transform ${activePlan === plans.length - 1 ? 'opacity-20' : 'opacity-100'}`}
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
                 </div>
             </div>
-
-            <style>{`
-                .glass-card {
-                    background: rgba(255, 255, 255, 0.04);
-                    border: 1px solid rgba(255, 255, 255, 0.12);
-                    backdrop-filter: blur(16px);
-                    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-                }
-                .glass-card:hover {
-                    background: rgba(255, 255, 255, 0.08);
-                    border-color: rgba(255, 255, 255, 0.25);
-                    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-                }
-                .payment-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 6px 10px;
-                    border-radius: 10px;
-                }
-            `}</style>
         </section>
     );
 };
+
 
 const PricingCard: React.FC<{
     plan: PricingPlan,
