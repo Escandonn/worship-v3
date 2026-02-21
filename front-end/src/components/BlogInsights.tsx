@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const ebooks = [
     {
@@ -31,8 +31,33 @@ const ebooks = [
 ];
 
 const BlogInsights: React.FC = () => {
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const sectionRef = useRef<HTMLElement>(null);
+    const rafId = useRef<number | null>(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (rafId.current) return;
+            rafId.current = requestAnimationFrame(() => {
+                if (!sectionRef.current) return;
+                const rect = sectionRef.current.getBoundingClientRect();
+                const vh = window.innerHeight;
+                const progress = Math.max(0, Math.min(1, 1 - (rect.top + rect.height / 2) / vh));
+                setScrollProgress(progress);
+                rafId.current = null;
+            });
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            if (rafId.current) cancelAnimationFrame(rafId.current);
+        };
+    }, []);
+
     return (
-        <section id="docs" className="relative w-full py-40 px-6 overflow-hidden bg-transparent">
+        <section ref={sectionRef} id="docs" className="relative w-full py-40 px-6 overflow-hidden bg-transparent">
             {/* Background Texture / Grid */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
                 style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
@@ -54,7 +79,7 @@ const BlogInsights: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 perspective-[3000px]">
                     {ebooks.map((ebook) => (
-                        <EbookCard key={ebook.id} ebook={ebook} />
+                        <EbookCard key={ebook.id} ebook={ebook} scrollProgress={scrollProgress} />
                     ))}
                 </div>
             </div>
@@ -62,8 +87,26 @@ const BlogInsights: React.FC = () => {
     );
 };
 
-const EbookCard: React.FC<{ ebook: any }> = ({ ebook }) => {
+const EbookCard: React.FC<{ ebook: any; scrollProgress: number }> = ({ ebook, scrollProgress }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const baseRotateY = -25 + scrollProgress * 50; // from -25 to 25
+    const baseRotateX = 5 - scrollProgress * 10; // from 5 to -5
+    const hoverRotateY = 0;
+    const hoverRotateX = 0;
+
+    const rotateY = isHovered && !isMobile ? hoverRotateY : baseRotateY;
+    const rotateX = isHovered && !isMobile ? hoverRotateX : baseRotateX;
+    const translateZ = isHovered && !isMobile ? 50 : 0;
+    const scale = isHovered && !isMobile ? 1.02 : 1;
 
     return (
         <div
@@ -72,9 +115,8 @@ const EbookCard: React.FC<{ ebook: any }> = ({ ebook }) => {
             className="relative h-[600px] cursor-pointer transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
             style={{
                 transformStyle: 'preserve-3d',
-                transform: isHovered
-                    ? 'rotateY(0deg) translateZ(50px) scale(1.02)'
-                    : 'rotateY(-25deg) rotateX(5deg)',
+                willChange: 'transform',
+                transform: `rotateY(${rotateY}deg) rotateX(${rotateX}deg) translateZ(${translateZ}px) scale(${scale})`,
             }}
         >
             {/* The "Spine" Shadow Effect */}
