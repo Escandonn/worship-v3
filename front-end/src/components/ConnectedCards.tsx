@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
+/* ICONS */
 const GlobeIcon = () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
         <circle cx="12" cy="12" r="10" />
@@ -10,7 +11,7 @@ const GlobeIcon = () => (
 
 const MobileIcon = () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
-        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+        <rect x="5" y="2" width="14" height="20" rx="2" />
         <line x1="12" y1="18" x2="12.01" y2="18" />
     </svg>
 );
@@ -23,6 +24,7 @@ const LayersIcon = () => (
     </svg>
 );
 
+/* DATA */
 const cards = [
     {
         id: 'card1',
@@ -67,339 +69,208 @@ const ConnectedCards: React.FC = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isMoving, setIsMoving] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
+
     const containerRef = useRef<HTMLDivElement>(null);
     const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const lastScrollY = useRef(0);
     const velocity = useRef(0);
     const scrollTimer = useRef<any>(null);
+    const rafId = useRef<number | null>(null);
 
+    /* ---------- LINE ---------- */
+    const updateLine = () => {
+        if (!containerRef.current) return;
+        const c1 = cardRefs.current['card1'];
+        const c2 = cardRefs.current['card2'];
+        const c3 = cardRefs.current['card3'];
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const mobile = window.innerWidth < 768;
+
+        if (c1 && c2 && c3) {
+            const center = (el: HTMLElement) => {
+                const r = el.getBoundingClientRect();
+                return {
+                    x: r.left + r.width / 2 - containerRect.left,
+                    y: r.top + r.height / 2 - containerRect.top
+                };
+            };
+
+            const p1 = center(c1);
+            const p2 = center(c2);
+            const p3 = center(c3);
+
+            const path = mobile
+                ? `M ${p1.x} ${p1.y} C ${p1.x} ${p1.y + 100}, ${p2.x} ${p2.y - 100}, ${p2.x} ${p2.y}
+           C ${p2.x} ${p2.y + 100}, ${p3.x} ${p3.y - 100}, ${p3.x} ${p3.y}`
+                : `M ${p1.x} ${p1.y} Q ${p2.x} ${p2.y} ${p3.x} ${p3.y}`;
+
+            setLinePath(path);
+            setIsLineVisible(true);
+        }
+    };
+
+    /* ---------- SCROLL RAF ---------- */
+    const handleScrollRaw = () => {
+        if (!containerRef.current) return;
+
+        const y = window.scrollY;
+        const delta = Math.abs(y - lastScrollY.current);
+        velocity.current = Math.min(delta / 50, 1.5);
+
+        const dir = y > lastScrollY.current ? 'down' : 'up';
+        lastScrollY.current = y;
+
+        const rect = containerRef.current.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const progress = 1 - (rect.top + rect.height) / (vh + rect.height);
+        const p = Math.max(0, Math.min(1, progress));
+
+        setScrollDirection(dir);
+        setScrollProgress(p);
+
+        if (p < 0.33) setActiveIndex(0);
+        else if (p < 0.66) setActiveIndex(1);
+        else setActiveIndex(2);
+
+        if (!isMobile) updateLine();
+
+        if (!isMoving) setIsMoving(true);
+
+        if (scrollTimer.current) clearTimeout(scrollTimer.current);
+        scrollTimer.current = setTimeout(() => {
+            velocity.current = 0;
+            setIsMoving(false);
+        }, 140);
+    };
+
+    const handleScroll = () => {
+        if (rafId.current) return;
+        rafId.current = requestAnimationFrame(() => {
+            handleScrollRaw();
+            rafId.current = null;
+        });
+    };
+
+    /* ---------- EFFECTS ---------- */
     useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
 
         const handleMouseMove = (e: MouseEvent) => {
             if (window.innerWidth < 768) return;
-            const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
             const y = (e.clientY / window.innerHeight - 0.5) * 2;
             setMousePosition({ x, y });
-
-            setIsMoving(true);
-            if (scrollTimer.current) clearTimeout(scrollTimer.current);
-            scrollTimer.current = setTimeout(() => setIsMoving(false), 1000);
         };
 
-        // Sequential appearance
-        const timeouts = [
-            setTimeout(() => setVisibleCards(prev => [...prev, 'card1']), 300),
-            setTimeout(() => setVisibleCards(prev => [...prev, 'card2']), 900),
-            setTimeout(() => {
-                setVisibleCards(prev => [...prev, 'card3']);
-                setTimeout(() => updateLine(), 400);
-            }, 1500),
-        ];
-
-        const updateLine = () => {
-            if (!containerRef.current) return;
-            const c1 = cardRefs.current['card1'];
-            const c2 = cardRefs.current['card2'];
-            const c3 = cardRefs.current['card3'];
-            const containerRect = containerRef.current.getBoundingClientRect();
-            const mobile = window.innerWidth < 768;
-
-            if (c1 && c2 && c3) {
-                const getCenter = (el: HTMLElement) => {
-                    const r = el.getBoundingClientRect();
-                    return {
-                        x: r.left + r.width / 2 - containerRect.left,
-                        y: r.top + r.height / 2 - containerRect.top
-                    };
-                };
-
-                const p1 = getCenter(c1);
-                const p2 = getCenter(c2);
-                const p3 = getCenter(c3);
-
-                if (mobile) {
-                    setLinePath(`M ${p1.x} ${p1.y} C ${p1.x} ${p1.y + 100}, ${p2.x} ${p2.y - 100}, ${p2.x} ${p2.y} C ${p2.x} ${p2.y + 100}, ${p3.x} ${p3.y - 100}, ${p3.x} ${p3.y}`);
-                } else {
-                    setLinePath(`M ${p1.x} ${p1.y} Q ${p2.x} ${p2.y} ${p3.x} ${p3.y}`);
-                }
-                setIsLineVisible(true);
-            }
-        };
-
-        const handleScroll = () => {
-            if (!containerRef.current) return;
-
-            setIsMoving(true);
-            const currentScrollY = window.scrollY;
-            const delta = Math.abs(currentScrollY - lastScrollY.current);
-            velocity.current = Math.min(delta / 50, 1.5); // Cap velocity
-
-            const direction = currentScrollY > lastScrollY.current ? 'down' : 'up';
-            lastScrollY.current = currentScrollY;
-            setScrollDirection(direction);
-
-            const rect = containerRef.current.getBoundingClientRect();
-            const viewHeight = window.innerHeight;
-            const progress = 1 - (rect.top + rect.height) / (viewHeight + rect.height);
-            const clampedProgress = Math.max(0, Math.min(1, progress));
-            setScrollProgress(clampedProgress);
-
-            // Calculate active index (0 to 1 split into 3 zones)
-            if (clampedProgress < 0.33) setActiveIndex(0);
-            else if (clampedProgress < 0.66) setActiveIndex(1);
-            else setActiveIndex(2);
-
-            updateLine();
-
-            // Clear velocity after scroll stop
-            if (scrollTimer.current) clearTimeout(scrollTimer.current as any);
-            scrollTimer.current = setTimeout(() => {
-                velocity.current = 0;
-                setIsMoving(false);
-            }, 150) as any;
-        };
+        const t1 = setTimeout(() => setVisibleCards(v => [...v, 'card1']), 300);
+        const t2 = setTimeout(() => setVisibleCards(v => [...v, 'card2']), 900);
+        const t3 = setTimeout(() => {
+            setVisibleCards(v => [...v, 'card3']);
+            setTimeout(updateLine, 400);
+        }, 1500);
 
         checkMobile();
         setIsMounted(true);
+        handleScroll();
+
         window.addEventListener('scroll', handleScroll, { passive: true });
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('resize', () => {
             checkMobile();
             updateLine();
         });
-        handleScroll();
 
         return () => {
-            timeouts.forEach(clearTimeout);
+            clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('resize', updateLine);
-            if (scrollTimer.current) clearTimeout(scrollTimer.current as any);
         };
-    }, []);
+    }, [isMobile]);
 
-    const currentTimeForWave = isMounted ? Date.now() : 0;
+    const time = isMounted ? Date.now() : 0;
 
+    /* ---------- RENDER ---------- */
     return (
-        <div id="productos" ref={containerRef} className="relative w-full max-w-6xl h-[1600px] md:h-[850px] mx-auto perspective-[1600px] px-4 md:px-0">
-            {/* SVG Connection Layer */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
-                <defs>
-                    <filter id="glow-line" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="4" result="blur" />
-                        <feMerge>
-                            <feMergeNode in="blur" />
-                            <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                    </filter>
-                </defs>
+        <div ref={containerRef} className="relative w-full max-w-6xl h-[1600px] md:h-[850px] mx-auto perspective-[1600px] px-4 md:px-0">
 
+            {/* SVG LINE */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
                 <path
                     d={linePath}
-                    className={`fill-none stroke-blue-400 stroke-2 md:stroke-3 stroke-linecap-round transition-all duration-1000 ease-in-out ${isLineVisible ? 'opacity-100' : 'opacity-0'}`}
+                    className={`fill-none stroke-blue-400 stroke-2 md:stroke-3 transition-all duration-1000 ${isLineVisible ? 'opacity-100' : 'opacity-0'}`}
                     style={{
-                        filter: 'drop-shadow(0 0 8px #60a5fa) drop-shadow(0 0 16px #60a5fa)',
                         strokeDasharray: 2000,
                         strokeDashoffset: isLineVisible ? 0 : 2000,
+                        filter: 'drop-shadow(0 0 8px #60a5fa)'
                     }}
                 />
-
-                {/* Energy Pulse Path */}
-                {isLineVisible && (
-                    <path
-                        d={linePath}
-                        className="fill-none stroke-white/40 stroke-2 md:stroke-3 stroke-linecap-round"
-                        style={{
-                            strokeDasharray: '50, 150',
-                            animation: 'pulse-flow 4s linear infinite',
-                            filter: 'blur(2px) drop-shadow(0 0 10px #fff)',
-                        }}
-                    />
-                )}
-
-                {isLineVisible && (
-                    <circle r="6" fill="#a5b4fc" style={{ filter: 'url(#glow-line)' }}>
-                        <animateMotion dur="3s" repeatCount="indefinite" rotate="auto">
-                            <mpath href="#path-anim" />
-                        </animateMotion>
-                    </circle>
-                )}
-                {/* Hidden path for animation motion since href needs an ID */}
-                <path id="path-anim" d={linePath} fill="none" pointerEvents="none" />
             </svg>
 
-            <style>{`
-                @keyframes pulse-flow {
-                    from { stroke-dashoffset: 2000; }
-                    to { stroke-dashoffset: 0; }
-                }
-                @keyframes shimmer-move {
-                    0% { transform: translateX(-150%) skewX(-20deg); }
-                    100% { transform: translateX(150%) skewX(-20deg); }
-                }
-            `}</style>
-
-            {/* Cards */}
+            {/* CARDS */}
             {cards.map((card, index) => {
                 const isDown = scrollDirection === 'down';
                 const spreadFactor = index === 0 ? -1 : index === 2 ? 1 : 0;
-
-                // Focus Logic
                 const isActive = index === activeIndex;
+
                 const focusScale = isActive ? 1.05 : 1;
-                const focusGlow = isActive ? 'rgba(96, 165, 250, 0.4)' : 'transparent';
-
-                // Premium Effects
                 const dynamicYRotate = isMobile ? (isDown ? 5 : -5) : (isDown ? 15 : -5);
-                const mouseRotateX = isActive ? -mousePosition.y * 10 : 0;
-                const mouseRotateY = isActive ? mousePosition.x * 10 : 0;
 
-                const dynamicZ = (scrollProgress - 0.5) * (isMobile ? 100 : 200);
-                const dynamicScale = (1 + (scrollProgress - 0.5) * 0.1) * focusScale;
+                const mouseRX = isActive ? -mousePosition.y * 10 : 0;
+                const mouseRY = isActive ? mousePosition.x * 10 : 0;
 
-                // Horizontal spread logic
-                const pcBaseOffset = index === 0 ? -400 : index === 2 ? 400 : 0;
+                const z = (scrollProgress - 0.5) * (isMobile ? 100 : 200);
+                const scale = (1 + (scrollProgress - 0.5) * 0.1) * focusScale;
+
+                const pcBase = index === 0 ? -400 : index === 2 ? 400 : 0;
                 const spreadX = isMobile ? 0 : (scrollProgress - 0.5) * 60 * spreadFactor;
-                const totalX = isMobile ? 0 : pcBaseOffset + spreadX;
+                const totalX = isMobile ? 0 : pcBase + spreadX;
 
-                const spreadY = isMobile ? (scrollProgress - 0.5) * 40 * (index - 1) : (scrollProgress - 0.5) * 60;
-
-                // Aberration / Velocity effects
-                const blurAmount = velocity.current * 4;
-                const grayscaleAmount = isMoving ? (isActive ? 0 : velocity.current * 0.5 + 0.3) : 0;
+                const spreadY = isMobile
+                    ? (scrollProgress - 0.5) * 40 * (index - 1)
+                    : (scrollProgress - 0.5) * 60;
 
                 return (
                     <div
                         key={card.id}
-                        ref={(el) => { cardRefs.current[card.id] = el; }}
-                        className={`absolute p-8 md:p-10 w-[280px] sm:w-[320px] md:w-[380px] rounded-[32px] bg-linear-to-b from-[#0b1220] via-[#0b1220] to-[#040812] border border-white/10 transition-all duration-700 ease-out transform-gpu overflow-hidden ${card.pos} ${card.rotate} ${visibleCards.includes(card.id) ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}
+                        ref={el => { cardRefs.current[card.id] = el; }}
+                        className={`absolute p-8 md:p-10 w-[280px] sm:w-[320px] md:w-[380px] rounded-[32px] bg-[#0b1220] border border-white/10 transition-all duration-700 transform-gpu ${card.pos} ${card.rotate} ${visibleCards.includes(card.id) ? 'opacity-100' : 'opacity-0 translate-y-20 scale-95'}`}
                         style={{
-                            boxShadow: `0 40px 120px rgba(0,0,0,0.8), 0 0 60px ${focusGlow}`,
-                            filter: `blur(${blurAmount}px) grayscale(${grayscaleAmount})`,
-                            opacity: visibleCards.includes(card.id) ? (isMoving ? (isActive ? 1 : 0.7) : 1) : 0,
+                            boxShadow: isActive
+                                ? '0 40px 120px rgba(0,0,0,0.8), 0 0 60px rgba(96,165,250,0.4)'
+                                : '0 40px 120px rgba(0,0,0,0.8)',
                             transformStyle: 'preserve-3d',
+                            willChange: 'transform',
                             transform: visibleCards.includes(card.id)
-                                ? `translateX(calc(-50% + ${totalX}px))
-                                   translateY(${spreadY}px) 
-                                   translateZ(${dynamicZ}px) 
-                                   scale(${dynamicScale})
-                                   rotateX(${mouseRotateX}deg)
-                                   rotateY(${dynamicYRotate + mouseRotateY}deg)`
+                                ? `translate3d(calc(-50% + ${totalX}px), ${spreadY}px, ${z}px) scale(${scale}) rotateX(${mouseRX}deg) rotateY(${dynamicYRotate + mouseRY}deg)`
                                 : 'translateX(-50%)'
                         }}
                     >
-                        {/* Interior Gradient Glow */}
-                        <div className={`absolute inset-0 bg-linear-to-br ${card.accent} to-transparent opacity-10 rounded-[32px] pointer-events-none`} />
+                        <div className={`absolute inset-0 bg-linear-to-br ${card.accent} to-transparent opacity-10 rounded-[32px]`} />
 
-                        {/* Holographic Shimmer Effect */}
-                        <div
-                            className="absolute inset-0 pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-                            style={{
-                                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%)',
-                                transform: 'translateX(-150%) skewX(-20deg)',
-                                animation: isActive ? 'shimmer-move 3s linear infinite' : 'none',
-                                opacity: isActive ? 1 : 0
-                            }}
-                        />
-
-                        {/* Card Tag */}
-                        <div className={`absolute top-10 right-10 text-[11px] font-black tracking-[0.3em] uppercase transform translate-z-[30px] transition-all duration-500 ${isMoving ? (isActive ? 'text-blue-400' : 'text-white/20') : 'text-blue-400/80'}`}>
+                        <div className="absolute top-10 right-10 text-[11px] font-black tracking-[0.3em] uppercase text-blue-400/80">
                             {card.tag}
                         </div>
 
-                        {/* Edge Highlight */}
-                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent z-20 pointer-events-none" />
-
-                        {/* Icon Container */}
-                        <div className={`w-14 h-14 md:w-16 md:h-16 mb-8 transform translate-z-[90px] transition-all duration-500 ${isMoving ? (isActive ? 'text-white scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]' : 'text-white/30 grayscale opacity-60') : 'text-white opacity-100 grayscale-0 scale-100'}`}>
+                        <div className="w-14 h-14 md:w-16 md:h-16 mb-8 text-white">
                             {card.icon}
                         </div>
 
-                        <h3
-                            className={`
-                                font-black mb-6 transform translate-z-[70px] tracking-tighter leading-none 
-                                transition-all duration-500 uppercase bg-linear-to-br 
-                                from-white via-white to-white/40 bg-clip-text text-transparent
-                                ${card.id === 'card2' ? 'text-2xl md:text-4xl' : 'text-3xl md:text-4xl'}
-                                ${isMoving ? (isActive ? 'opacity-100' : 'opacity-60') : 'opacity-100'}`}
-                        >
+                        <h3 className="font-black mb-6 tracking-tight leading-none uppercase text-white text-3xl md:text-4xl">
                             {card.id === 'card2'
                                 ? card.title
-                                : card.title.split(' ').map((word, i) => (
-                                    <React.Fragment key={i}>
-                                        {word}
-                                        <br />
-                                    </React.Fragment>
+                                : card.title.split(' ').map((w, i) => (
+                                    <React.Fragment key={i}>{w}<br /></React.Fragment>
                                 ))}
                         </h3>
 
-                        <p className={`text-gray-400 text-sm md:text-base leading-relaxed transform translate-z-[40px] font-normal transition-all duration-500 max-w-[90%] ${isMoving ? (isActive ? 'opacity-100' : 'opacity-40') : 'opacity-100'}`}>
+                        <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-[90%]">
                             {card.desc}
                         </p>
 
-                        {/* Bottom Line Accent */}
-                        <div className={`absolute bottom-0 left-0 right-0 h-[2px] transition-all duration-700 ${isActive ? 'bg-linear-to-r from-transparent via-blue-500/40 to-transparent scale-x-100' : 'bg-linear-to-r from-transparent via-white/5 to-transparent'}`} />
+                        <div className={`absolute bottom-0 left-0 right-0 h-[2px] ${isActive ? 'bg-blue-500/40' : 'bg-white/5'}`} />
                     </div>
                 );
             })}
-
-            {/* SoundWave Visual Effect */}
-            <div className="absolute bottom-4 md:bottom-2 left-0 right-0 h-40 pointer-events-none z-10 overflow-hidden">
-                <svg className="w-full h-full preserve-3d" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="wave-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="transparent" />
-                            <stop offset="50%" stopColor="currentColor" />
-                            <stop offset="100%" stopColor="transparent" />
-                        </linearGradient>
-                    </defs>
-
-                    {/* Core "Auditory" Wave */}
-                    <path
-                        className={`transition-colors duration-1000 ${scrollDirection === 'up' ? 'text-cyan-400' : 'text-[#FFD700]'}`}
-                        fill="none"
-                        stroke="url(#wave-gradient)"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        style={{
-                            filter: `drop-shadow(0 0 20px ${scrollDirection === 'up' ? '#22d3ee' : '#FFD700'})`,
-                            opacity: isMoving ? 0.9 : 0.4,
-                        }}
-                        d={Array.from({ length: 151 }).map((_, i) => {
-                            const x = i * 8;
-                            // High frequency loop + base jitter
-                            const baseFreq = 0.05 + (velocity.current * 0.1);
-                            const noise = Math.sin(i * 0.5 + currentTimeForWave * 0.01) * 5; // Jittery loop
-                            const amplitude = (isMoving ? 40 : 15) + (velocity.current * 50);
-                            const phase = scrollProgress * 15 + (currentTimeForWave * 0.004);
-                            const y = 60 + Math.sin(i * baseFreq + phase) * amplitude + noise;
-                            return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-                        }).join(' ')}
-                    />
-
-                    {/* Secondary High-Frequency Analyzer Wave */}
-                    <path
-                        className={`transition-colors duration-1000 ${scrollDirection === 'up' ? 'text-cyan-500/40' : 'text-[#FFD700]/40'}`}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        style={{
-                            opacity: isMoving ? 0.6 : 0.2,
-                        }}
-                        d={Array.from({ length: 151 }).map((_, i) => {
-                            const x = i * 8;
-                            const frequency = 0.1 + (velocity.current * 0.2); // Extremely high for analyzer look
-                            const amplitude = (isMoving ? 15 : 5) + (velocity.current * 20);
-                            const phase = -scrollProgress * 12 + (currentTimeForWave * 0.008);
-                            const y = 60 + Math.cos(i * frequency + phase) * amplitude * Math.sin(i * 0.1);
-                            return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-                        }).join(' ')}
-                    />
-                </svg>
-            </div>
         </div>
     );
 };
