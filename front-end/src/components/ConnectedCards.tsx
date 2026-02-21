@@ -318,13 +318,15 @@ const ConnectedCards: React.FC = () => {
                             {card.icon}
                         </div>
 
-                        <h3 className={`text-3xl md:text-4xl font-black mb-6 transform translate-z-[70px] tracking-tighter leading-none transition-all duration-500 uppercase bg-linear-to-br from-white via-white to-white/40 bg-clip-text text-transparent ${isMoving ? (isActive ? 'opacity-100' : 'opacity-60') : 'opacity-100'}`}>
-                            {card.title.split(' ').map((word, i) => (
-                                <React.Fragment key={i}>
-                                    {word}<br />
-                                </React.Fragment>
-                            ))}
-                        </h3>
+                        <h3
+                            className={`
+                                    font-black mb-6 transform translate-z-[70px] tracking-tighter leading-none 
+                                    transition-all duration-500 uppercase bg-linear-to-br 
+                                    from-white via-white to-white/40 bg-clip-text text-transparent
+                                    ${card.id === 'card2' && isMobile ? 'text-2xl' : 'text-3xl md:text-4xl'}
+                                    ${isMoving ? (isActive ? 'opacity-100' : 'opacity-60') : 'opacity-100'}
+                                `}
+                        ></h3>
 
                         <p className={`text-gray-400 text-sm md:text-base leading-relaxed transform translate-z-[40px] font-normal transition-all duration-500 max-w-[90%] ${isMoving ? (isActive ? 'opacity-100' : 'opacity-40') : 'opacity-100'}`}>
                             {card.desc}
