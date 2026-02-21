@@ -110,9 +110,13 @@ const HandsCarousel: React.FC = () => {
     };
 
     return (
-        <div ref={containerRef} className="relative w-full h-[20vh] md:h-[50vh] flex flex-col items-center justify-center pointer-events-none overflow-hidden">
+        <div
+            ref={containerRef}
+            className="relative w-full h-[20vh] md:h-[45vh] flex flex-col items-center justify-center pointer-events-none overflow-hidden"
+        >
             {/* Title */}
             <div className="absolute top-4 md:top-8 w-full text-center z-20 px-4">
+
                 <h2 className="text-xl md:text-3xl font-bold tracking-tighter text-white/90 drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]">
                     Usamos las últimas <span className="text-[#39FF14]">tecnologías</span>
                 </h2>
@@ -132,22 +136,33 @@ const HandsCarousel: React.FC = () => {
                 }}
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
-
             {/* Hand Right (Dios) */}
             <img
                 src={godImg.src}
                 alt="Mano de Dios"
-                className={`absolute right-[-5vw] top-[100%] -translate-y-1/2 h-[20vh] md:h-[55vh] max-h-[400px] md:max-h-none w-auto pointer-events-none select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] scale-x-[-1] transition-all duration-700 ease-out delay-100 ${showHands ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'}`}
+                className={`absolute right-[-15vw] md:right-[-8vw] lg:right-[-4vw] 
+                top-[108%] md:top-[112%] 
+                -translate-y-1/2 
+                h-[26vh] md:h-[55vh] lg:h-[60vh] max-h-[520px] w-auto 
+                pointer-events-none select-none 
+                drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] 
+                scale-x-[-1] 
+                transition-all duration-700 ease-out delay-100 
+                ${showHands ? 'opacity-100' : 'opacity-0 translate-x-full'}`}
                 style={{
                     transform: showHands
-                        ? `translateY(calc(-50% + ${tilt.y * 0.5 + (scrollProgress - 0.5) * -100}px)) 
-                           translateX(${-tilt.x * 0.2 + (scrollDirection === 'down' ? 20 : -20)}px) 
-                           scaleX(-1) 
-                           rotate(${scrollDirection === 'down' ? -5 : 5}deg)`
-                        : 'translateY(-50%) translateX(100%) scaleX(-1)'
+                        ? `translateY(calc(-50% + ${(window.innerWidth < 768
+                            ? tilt.y * 0.15 + (scrollProgress - 0.5) * -40
+                            : tilt.y * 0.5 + (scrollProgress - 0.5) * -100
+                        )
+                        }px))
+                        scaleX(-1) 
+                        rotate(${scrollDirection === 'down' ? -3 : 3}deg)`
+                        : 'translateY(-50%) scaleX(-1)'
                 }}
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
+
 
             {/* Carousel */}
             <div
