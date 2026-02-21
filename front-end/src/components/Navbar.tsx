@@ -30,7 +30,7 @@ const Navbar = () => {
                         <span className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-neon-green transition-all duration-300 group-hover:w-full rounded-sm shadow-[0_0_10px_#39FF14]"></span>
                     </a>
                     <a href="#productos" className="text-white/85 hover:text-white transition-colors relative group">
-                        Productos
+                        Servicios
                         <span className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-neon-green transition-all duration-300 group-hover:w-full rounded-sm shadow-[0_0_10px_#39FF14]"></span>
                     </a>
                     <a href="#precios" className="text-white/85 hover:text-white transition-colors relative group">
