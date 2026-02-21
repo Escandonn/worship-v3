@@ -178,7 +178,7 @@ const PricingSection: React.FC = () => {
                 <div className="text-center mb-8 md:mb-12 px-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 mb-4 text-xs font-semibold tracking-[0.2em] uppercase text-white/50">
                         <span className="w-1.5 h-1.5 rounded-full bg-neon-blue animate-pulse" />
-                        Inversión Anual · Dos Pagos
+                        Inversión Anual ·  Pagos flexibles
                     </div>
                     <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-3 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                         <AntigravityText
