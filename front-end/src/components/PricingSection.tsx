@@ -3,45 +3,75 @@ import AntigravityText from './AntigravityText';
 
 interface PricingPlan {
     name: string;
-    price: string;
-    period: string;
+    tag: string;
+    totalPrice: string;
+    downPaymentPct: string;
+    downPayment: string;
+    remainder: string;
     description: string;
     features: string[];
     buttonText: string;
     isPopular?: boolean;
     accent: string;
+    accentRaw: string;
 }
 
 const WHATSAPP_URL = "https://wa.me/573172474295";
 
 const plans: PricingPlan[] = [
     {
-        name: "Páginas Web",
-        price: "$800K – $1.2M",
-        period: "COP",
-        description: "Sitio web profesional, moderno y optimizado para tu negocio.",
-        features: ["Diseño personalizado", "Responsive & SEO", "Cambios constantes y renovación"],
-        buttonText: "Habla con nosotros",
-        accent: "rgba(57, 255, 20, 0.4)" // Neon Green
+        name: "Presencia Digital",
+        tag: "Web profesional",
+        totalPrice: "$1.2M",
+        downPaymentPct: "30%",
+        downPayment: "$360K",
+        remainder: "$840K",
+        description: "Tu marca en la web con diseño premium, rendimiento y posicionamiento real.",
+        features: [
+            "Diseño a medida & responsive",
+            "SEO técnico desde el día 1",
+            "Actualizaciones continuas",
+        ],
+        buttonText: "Iniciar proyecto",
+        accent: "rgba(57, 255, 20, 0.45)",
+        accentRaw: "#39ff14",
     },
     {
-        name: "App Móvil",
-        price: "$2M – $3M",
-        period: "COP",
-        description: "Aplicación móvil a medida para iOS y Android.",
-        features: ["iOS & Android nativo", "Diseño UI/UX premium", "Integraciones API", "Soporte técnico"],
-        buttonText: "Habla con nosotros",
+        name: "App de Alto Impacto",
+        tag: "iOS & Android",
+        totalPrice: "$3M",
+        downPaymentPct: "35%",
+        downPayment: "$1.05M",
+        remainder: "$1.95M",
+        description: "Aplicación nativa que convierte usuarios en clientes fieles desde el lanzamiento.",
+        features: [
+            "iOS & Android nativos",
+            "UI/UX de clase mundial",
+            "Integraciones API avanzadas",
+            "Soporte técnico dedicado",
+        ],
+        buttonText: "Quiero mi App",
         isPopular: true,
-        accent: "rgba(0, 243, 255, 0.4)" // Neon Blue
+        accent: "rgba(0, 243, 255, 0.45)",
+        accentRaw: "#00f3ff",
     },
     {
-        name: "Software Empresarial",
-        price: "Consultar",
-        period: "",
-        description: "Soluciones a medida para empresas con necesidades complejas.",
-        features: ["Sistema a medida", "Integraciones empresariales", "Soporte dedicado", "Escalabilidad garantizada"],
-        buttonText: "Habla con nosotros",
-        accent: "rgba(188, 19, 254, 0.4)" // Neon Purple
+        name: "Motor Empresarial",
+        tag: "Software a medida",
+        totalPrice: "A medida",
+        downPaymentPct: "40%",
+        downPayment: "Primer pago",
+        remainder: "Saldo contado",
+        description: "Infraestructura de software diseñada para escalar con tus operaciones sin límites.",
+        features: [
+            "Arquitectura escalable",
+            "Integraciones empresariales",
+            "Panel de control propio",
+            "SLA & soporte prioritario",
+        ],
+        buttonText: "Agendar consultoría",
+        accent: "rgba(188, 19, 254, 0.45)",
+        accentRaw: "#bc13fe",
     }
 ];
 
@@ -49,10 +79,9 @@ const PricingSection: React.FC = () => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [scrollProgress, setScrollProgress] = useState(0);
     const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
-    const [activePlan, setActivePlan] = useState(1); // Default to Pro
+    const [activePlan, setActivePlan] = useState(1);
     const [isIntersecting, setIsIntersecting] = useState(false);
     const [isShining, setIsShining] = useState(false);
-
     const [isMounted, setIsMounted] = useState(false);
 
     const sectionRef = useRef<HTMLElement>(null);
@@ -66,10 +95,7 @@ const PricingSection: React.FC = () => {
         const handleMouseMove = (e: MouseEvent) => {
             if (!sectionRef.current) return;
             const rect = sectionRef.current.getBoundingClientRect();
-            setMousePos({
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            });
+            setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
         };
 
         const handleScroll = () => {
@@ -77,12 +103,8 @@ const PricingSection: React.FC = () => {
             const currentScrollY = window.scrollY;
             setScrollDirection(currentScrollY > lastScrollY.current ? 'down' : 'up');
             lastScrollY.current = currentScrollY;
-
             const rect = sectionRef.current.getBoundingClientRect();
-            const viewHeight = window.innerHeight;
-
-            // Progress calculation
-            const progress = (viewHeight - rect.top) / viewHeight;
+            const progress = (window.innerHeight - rect.top) / window.innerHeight;
             setScrollProgress(progress);
         };
 
@@ -94,8 +116,7 @@ const PricingSection: React.FC = () => {
         if (sectionRef.current) observer.observe(sectionRef.current);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('scroll', handleScroll, { passive: true });
-
-        handleScroll(); // Initialize values on mount
+        handleScroll();
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
@@ -104,36 +125,22 @@ const PricingSection: React.FC = () => {
         };
     }, []);
 
-    // Mobile Intro Sequence
     useEffect(() => {
         if (isIntersecting && !hasPlayedIntro.current && isMounted && typeof window !== 'undefined' && window.innerWidth < 768) {
             hasPlayedIntro.current = true;
-
-            const triggerShine = () => {
-                setIsShining(true);
-                setTimeout(() => setIsShining(false), 500);
-            };
-
+            const triggerShine = () => { setIsShining(true); setTimeout(() => setIsShining(false), 500); };
             const sequence = async () => {
-                await new Promise(r => setTimeout(r, 800)); // Initial wait
-
+                await new Promise(r => setTimeout(r, 800));
                 setActivePlan(2); triggerShine();
                 await new Promise(r => setTimeout(r, 700));
-
                 setActivePlan(0); triggerShine();
                 await new Promise(r => setTimeout(r, 700));
-
                 setActivePlan(1); triggerShine();
             };
-
             sequence();
         }
     }, [isIntersecting, isMounted]);
 
-    // Derived animation states
-    const isInView = isIntersecting && scrollProgress > 0.1 && scrollProgress < 1.9;
-
-    // Scale and recoil logic (Safe clamping)
     const safeProgress = Math.max(0, Math.min(1, scrollProgress));
     const revealScale = isMounted ? Math.max(0.8, Math.min(1, safeProgress * 1.2)) : 0;
     const revealOpacity = isMounted ? Math.max(0, Math.min(1, safeProgress * 2)) : 0;
@@ -146,14 +153,9 @@ const PricingSection: React.FC = () => {
             id="precios"
             className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent"
         >
-            {/* Background Layer: Removed custom gradient to use Astro's symmetrical background */}
-
-            {/* Depth Particles: Removed to use Astro's standard ParticlesBackground */}
-
-            {/* Main Antigravity Container */}
             <div
                 ref={containerRef}
-                className="relative z-10 w-[95%] max-w-6xl h-[85vh] md:h-[70vh] rounded-[40px] border border-white/20 flex flex-col items-center justify-center transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                className="relative z-10 w-[95%] max-w-6xl h-[85vh] md:h-[75vh] rounded-[40px] border border-white/20 flex flex-col items-center justify-center transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
                 style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.04)',
                     backdropFilter: 'blur(32px)',
@@ -162,10 +164,9 @@ const PricingSection: React.FC = () => {
                     transform: `scale(${revealScale * recoilScale}) translateY(${recoilY}px)`,
                 }}
             >
-                {/* Secondary Inner Border / Hexagon Glow */}
                 <div className="absolute inset-[2px] rounded-[38px] border border-white/5 pointer-events-none" />
 
-                {/* Internal Glow Follows Mouse */}
+                {/* Mouse glow */}
                 <div
                     className="absolute inset-0 rounded-[40px] pointer-events-none opacity-30 overflow-hidden"
                     style={{
@@ -173,22 +174,28 @@ const PricingSection: React.FC = () => {
                     }}
                 />
 
-                {/* Section Title */}
-                <div className="text-center mb-10 md:mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                {/* Section Header */}
+                <div className="text-center mb-8 md:mb-12 px-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 mb-4 text-xs font-semibold tracking-[0.2em] uppercase text-white/50">
+                        <span className="w-1.5 h-1.5 rounded-full bg-neon-blue animate-pulse" />
+                        Inversión Anual · Dos Pagos
+                    </div>
+                    <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-3 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                         <AntigravityText
-                            text="Evoluciona tu Negocio"
+                            text="Construye sin Límites"
                             className="inline-block"
                             letterClassName="text-white"
                         />
                     </h2>
-                    <p className="text-white/70 text-base md:text-lg max-w-lg mx-auto font-medium drop-shadow-md">
-                        Arquitectura robusta para empresas que no aceptan límites.
+                    <p className="text-white/50 text-sm md:text-base max-w-md mx-auto font-medium leading-relaxed">
+                        Primer mes:{' '}
+                        <span className="text-white/80 font-bold">30–40% del total.</span>{' '}
+                        El saldo restante, de contado.
                     </p>
                 </div>
 
-                {/* Desktop Pricing Grid */}
-                <div className="hidden md:grid grid-cols-3 gap-8 w-full px-12 perspective-[2000px]">
+                {/* Desktop Grid */}
+                <div className="hidden md:grid grid-cols-3 gap-6 w-full px-10 perspective-[2000px]">
                     {plans.map((plan, idx) => (
                         <PricingCard
                             key={idx}
@@ -199,8 +206,8 @@ const PricingSection: React.FC = () => {
                     ))}
                 </div>
 
-                {/* Mobile Slider View */}
-                <div className="flex md:hidden flex-col items-center w-full px-4 relative h-[45vh]">
+                {/* Mobile Slider */}
+                <div className="flex md:hidden flex-col items-center w-full px-4 relative h-[50vh]">
                     <div className="relative w-full h-full flex items-center justify-center">
                         {plans.map((plan, idx) => (
                             <div
@@ -217,8 +224,7 @@ const PricingSection: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* Mobile Navigation Capsule */}
-                    <div className="mt-8 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl flex items-center gap-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+                    <div className="mt-6 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl flex items-center gap-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
                         <button
                             onClick={() => setActivePlan(prev => Math.max(0, prev - 1))}
                             className={`p-1.5 rounded-full hover:bg-white/10 transition-colors ${activePlan === 0 ? 'opacity-30' : ''}`}
@@ -228,7 +234,7 @@ const PricingSection: React.FC = () => {
                         </button>
                         <div className="flex gap-2">
                             {plans.map((_, i) => (
-                                <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${i === activePlan ? 'bg-neon-blue w-4' : 'bg-white/20'}`} />
+                                <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === activePlan ? 'bg-neon-blue w-4' : 'bg-white/20 w-1.5'}`} />
                             ))}
                         </div>
                         <button
@@ -245,21 +251,27 @@ const PricingSection: React.FC = () => {
             <style>{`
                 .glass-card {
                     background: rgba(255, 255, 255, 0.04);
-                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border: 1px solid rgba(255, 255, 255, 0.12);
                     backdrop-filter: blur(16px);
                     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
                 }
                 .glass-card:hover {
                     background: rgba(255, 255, 255, 0.08);
-                    border-color: rgba(255, 255, 255, 0.4);
+                    border-color: rgba(255, 255, 255, 0.25);
                     box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+                }
+                .payment-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 6px 10px;
+                    border-radius: 10px;
                 }
             `}</style>
         </section>
     );
 };
 
-// Internal Sub-component for 3D Tilt Cards
 const PricingCard: React.FC<{
     plan: PricingPlan,
     mousePos: { x: number, y: number },
@@ -272,14 +284,9 @@ const PricingCard: React.FC<{
         if (!cardRef.current || !sectionRef.current) return;
         const rect = cardRef.current.getBoundingClientRect();
         const sectionRect = sectionRef.current.getBoundingClientRect();
-
-        // Local mouse pos relative to card center
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-
-        // Only tilt if mouse is nearby (simple proximity)
         const distance = Math.sqrt(Math.pow(mousePos.x + sectionRect.left - centerX, 2) + Math.pow(mousePos.y + sectionRect.top - centerY, 2));
-
         if (distance < 400) {
             const relX = (mousePos.x + sectionRect.left - centerX) / (rect.width / 2);
             const relY = (mousePos.y + sectionRect.top - centerY) / (rect.height / 2);
@@ -292,47 +299,83 @@ const PricingCard: React.FC<{
     return (
         <div
             ref={cardRef}
-            className={`relative p-8 rounded-3xl glass-card flex flex-col items-center text-center group cursor-default transition-all duration-500`}
+            className="relative p-6 rounded-3xl glass-card flex flex-col cursor-default"
             style={{
                 transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-                borderColor: plan.isPopular ? 'rgba(0, 243, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)',
-                boxShadow: plan.isPopular ? '0 20px 60px rgba(0, 243, 255, 0.1)' : '0 10px 40px rgba(0,0,0,0.3)',
-                background: 'rgba(255, 255, 255, 0.05)'
+                borderColor: plan.isPopular ? plan.accent : 'rgba(255, 255, 255, 0.12)',
+                boxShadow: plan.isPopular ? `0 20px 60px ${plan.accent}` : '0 10px 40px rgba(0,0,0,0.3)',
             }}
         >
             {plan.isPopular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-neon-blue text-black text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,243,255,0.5)] z-30">
-                    Más Popular
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-neon-blue text-black text-[9px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,243,255,0.5)] z-30 whitespace-nowrap">
+                    ⚡ Más Contratado
                 </div>
             )}
 
-            <h3 className="text-xl font-black mb-1 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-300">{plan.name}</h3>
-            <div className="flex items-baseline mb-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]">
-                <span className="text-3xl font-black text-white">{plan.price}</span>
-                {plan.period && <span className="text-white/60 font-bold ml-1"> {plan.period}</span>}
+            {/* Tag */}
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: plan.accentRaw }}>
+                {plan.tag}
+            </span>
+
+            {/* Name */}
+            <h3 className="text-lg font-black text-white mb-4 leading-tight">{plan.name}</h3>
+
+            {/* Total Price */}
+            <div className="mb-4 pb-4 border-b border-white/10">
+                <div className="text-xs text-white/40 font-medium mb-1 uppercase tracking-wider">Inversión anual total</div>
+                <div className="text-3xl font-black text-white">{plan.totalPrice} <span className="text-base font-semibold text-white/40">COP</span></div>
             </div>
 
-            <p className="text-sm text-white/80 mb-8 min-h-[40px] leading-relaxed drop-shadow-sm font-medium">
-                {plan.description}
-            </p>
+            {/* Payment Structure */}
+            <div className="mb-5 space-y-2">
+                <div className="text-xs text-white/40 font-medium uppercase tracking-wider mb-2">Esquema de pago</div>
 
-            <ul className="w-full text-left space-y-3.5 mb-10 block">
+                <div className="payment-row" style={{ backgroundColor: `${plan.accentRaw}18`, border: `1px solid ${plan.accentRaw}35` }}>
+                    <div>
+                        <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wider">Primer mes</div>
+                        <div className="text-sm font-black" style={{ color: plan.accentRaw }}>{plan.downPayment}</div>
+                    </div>
+                    <div className="px-2 py-0.5 rounded-full text-[10px] font-black" style={{ backgroundColor: `${plan.accentRaw}25`, color: plan.accentRaw }}>
+                        {plan.downPaymentPct}
+                    </div>
+                </div>
+
+                <div className="payment-row bg-white/5 border border-white/10">
+                    <div>
+                        <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wider">Saldo al contado</div>
+                        <div className="text-sm font-bold text-white/80">{plan.remainder}</div>
+                    </div>
+                    <div className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white/40 bg-white/5 border border-white/10">
+                        Restante
+                    </div>
+                </div>
+            </div>
+
+            {/* Features */}
+            <ul className="w-full space-y-2.5 mb-6">
                 {plan.features.map((feat, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-white font-medium drop-shadow-sm">
-                        <div className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: plan.accent, color: plan.accent }} />
+                    <li key={i} className="flex items-center gap-2.5 text-xs text-white/70 font-medium">
+                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-[0_0_6px_currentColor]" style={{ backgroundColor: plan.accentRaw, color: plan.accentRaw }} />
                         {feat}
                     </li>
                 ))}
             </ul>
 
+            {/* CTA */}
             <a
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`mt-auto w-full py-3.5 rounded-xl font-bold transition-all duration-300 relative overflow-hidden group/btn text-center block ${plan.isPopular
-                    ? 'bg-neon-blue text-black shadow-[0_0_20px_rgba(0,243,255,0.2)] hover:shadow-[0_0_30px_rgba(0,243,255,0.4)]'
-                    : 'bg-white/5 text-white/90 border border-white/10 hover:bg-white/10 hover:border-white/20'
-                    }`}
+                className="mt-auto w-full py-3 rounded-xl text-sm font-black transition-all duration-300 text-center block"
+                style={plan.isPopular ? {
+                    background: `linear-gradient(135deg, ${plan.accentRaw}, rgba(0,243,255,0.6))`,
+                    color: '#000',
+                    boxShadow: `0 0 24px ${plan.accent}`,
+                } : {
+                    background: 'rgba(255,255,255,0.06)',
+                    color: 'rgba(255,255,255,0.85)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                }}
             >
                 {plan.buttonText}
             </a>
@@ -342,27 +385,54 @@ const PricingCard: React.FC<{
 
 const MobilePricingCard: React.FC<{ plan: PricingPlan, isShining?: boolean }> = ({ plan, isShining }) => {
     return (
-        <div className="w-[300px] p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-2xl flex flex-col items-center text-center shadow-2xl">
-            <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
-            <div className="flex items-baseline mb-4">
-                <span className="text-2xl font-black text-white">{plan.price}</span>
-                {plan.period && <span className="text-white/40 ml-1"> {plan.period}</span>}
+        <div className="w-[310px] p-6 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-2xl flex flex-col shadow-2xl">
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: plan.accentRaw }}>{plan.tag}</span>
+            <h3 className="text-lg font-black text-white mb-3">{plan.name}</h3>
+
+            <div className="mb-4 pb-4 border-b border-white/10">
+                <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">Total anual</div>
+                <div className="text-2xl font-black text-white">{plan.totalPrice} <span className="text-sm text-white/40">COP</span></div>
             </div>
-            <p className="text-xs text-white/50 mb-6">{plan.description}</p>
-            <ul className="w-full text-left space-y-3 mb-8">
+
+            <div className="space-y-2 mb-5">
+                <div className="flex justify-between items-center p-2.5 rounded-xl" style={{ backgroundColor: `${plan.accentRaw}15`, border: `1px solid ${plan.accentRaw}30` }}>
+                    <div>
+                        <div className="text-[9px] text-white/40 uppercase tracking-wider">Primer mes</div>
+                        <div className="text-sm font-black" style={{ color: plan.accentRaw }}>{plan.downPayment}</div>
+                    </div>
+                    <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ backgroundColor: `${plan.accentRaw}20`, color: plan.accentRaw }}>{plan.downPaymentPct}</span>
+                </div>
+                <div className="flex justify-between items-center p-2.5 rounded-xl bg-white/5 border border-white/10">
+                    <div>
+                        <div className="text-[9px] text-white/40 uppercase tracking-wider">Saldo contado</div>
+                        <div className="text-sm font-bold text-white/70">{plan.remainder}</div>
+                    </div>
+                    <span className="text-[9px] text-white/30 px-2 py-0.5 rounded-full bg-white/5">Restante</span>
+                </div>
+            </div>
+
+            <ul className="space-y-2 mb-6">
                 {plan.features.slice(0, 3).map((feat, i) => (
-                    <li key={i} className="flex items-center gap-2 text-xs text-white/70">
-                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: plan.accent }} />
+                    <li key={i} className="flex items-center gap-2 text-xs text-white/60">
+                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: plan.accentRaw }} />
                         {feat}
                     </li>
                 ))}
             </ul>
+
             <a
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`w-full py-3 rounded-xl font-bold transition-all duration-300 text-center block ${plan.isPopular ? 'bg-neon-blue text-black' : 'bg-white/10 text-white border border-white/10'
-                    } ${isShining ? 'animate-button-shine' : ''}`}
+                className={`w-full py-3 rounded-xl text-sm font-black text-center block transition-all duration-300 ${isShining ? 'animate-button-shine' : ''}`}
+                style={plan.isPopular ? {
+                    background: `linear-gradient(135deg, ${plan.accentRaw}, rgba(0,243,255,0.6))`,
+                    color: '#000',
+                } : {
+                    background: 'rgba(255,255,255,0.08)',
+                    color: 'rgba(255,255,255,0.85)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                }}
             >
                 {plan.buttonText}
             </a>
@@ -372,9 +442,7 @@ const MobilePricingCard: React.FC<{ plan: PricingPlan, isShining?: boolean }> = 
                     50% { box-shadow: 0 0 30px white; filter: brightness(1.8); }
                     100% { box-shadow: 0 0 0px transparent; filter: brightness(1); }
                 }
-                .animate-button-shine {
-                    animation: button-shine 0.5s ease-out;
-                }
+                .animate-button-shine { animation: button-shine 0.5s ease-out; }
             `}</style>
         </div>
     );
