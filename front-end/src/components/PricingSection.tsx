@@ -25,7 +25,7 @@ const plans: PricingPlan[] = [
         totalPrice: "$1.2M",
         downPaymentPct: "30%",
         downPayment: "$360K",
-        remainder: "$840K",
+        remainder: "$70K",
         description: "Tu marca en la web con diseño premium, rendimiento y posicionamiento real.",
         features: [
             "Diseño a medida & responsive",
@@ -42,7 +42,7 @@ const plans: PricingPlan[] = [
         totalPrice: "$3M",
         downPaymentPct: "35%",
         downPayment: "$1.05M",
-        remainder: "$1.95M",
+        remainder: "$162,500K",
         description: "Aplicación nativa que convierte usuarios en clientes fieles desde el lanzamiento.",
         features: [
             "iOS & Android nativos",
@@ -342,7 +342,7 @@ const PricingCard: React.FC<{
 
                 <div className="payment-row bg-white/5 border border-white/10">
                     <div>
-                        <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wider">Saldo al contado</div>
+                        <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wider">Saldo mensual</div>
                         <div className="text-sm font-bold text-white/80">{plan.remainder}</div>
                     </div>
                     <div className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white/40 bg-white/5 border border-white/10">
