@@ -186,10 +186,10 @@ const PricingSection: React.FC = () => {
                                 key={idx}
                                 // Optimización de transiciones en las cards
                                 className={`absolute transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] transform ${idx === activePlan
-                                        ? 'opacity-100 scale-100 z-20 translate-x-0'
-                                        : idx < activePlan
-                                            ? 'opacity-0 -translate-x-full scale-90 z-10'
-                                            : 'opacity-0 translate-x-full scale-90 z-10'
+                                    ? 'opacity-100 scale-100 z-20 translate-x-0'
+                                    : idx < activePlan
+                                        ? 'opacity-0 -translate-x-full scale-90 z-10'
+                                        : 'opacity-0 translate-x-full scale-90 z-10'
                                     }`}
                             >
                                 <MobilePricingCard plan={plan} isShining={isShining && idx === activePlan} />
@@ -362,7 +362,7 @@ const MobilePricingCard: React.FC<{ plan: PricingPlan, isShining?: boolean }> = 
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-xl bg-white/5 border border-white/10">
                     <div>
-                        <div className="text-[9px] text-white/40 uppercase tracking-wider">Saldo contado</div>
+                        <div className="text-[9px] text-white/40 uppercase tracking-wider">Saldo Mensual</div>
                         <div className="text-sm font-bold text-white/70">{plan.remainder}</div>
                     </div>
                     <span className="text-[9px] text-white/30 px-2 py-0.5 rounded-full bg-white/5">Restante</span>
