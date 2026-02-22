@@ -29,7 +29,7 @@ const Navbar = () => {
                         Inicio
                         <span className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-neon-green transition-all duration-300 group-hover:w-full rounded-sm shadow-[0_0_10px_#39FF14]"></span>
                     </a>
-                    <a href="#servicios" className="text-white/85 hover:text-white transition-colors relative group">
+                    <a href="perono.lo" className="text-white/85 hover:text-white transition-colors relative group">
                         Servicios
                         <span className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-neon-green transition-all duration-300 group-hover:w-full rounded-sm shadow-[0_0_10px_#39FF14]"></span>
                     </a>
@@ -60,7 +60,7 @@ const Navbar = () => {
             {/* Mobile Menu Overlay */}
             <div className={`fixed top-[72px] right-0 w-[260px] h-[calc(100vh-72px)] backdrop-blur-[18px] bg-[#0a0f1e]/90 border-l border-white/10 p-7 flex flex-col gap-5.5 transform transition-transform duration-350 ease-in-out z-999 md:hidden ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <a href="#" className="text-white/90 text-base" onClick={() => setIsOpen(false)}>Inicio</a>
-                <a href="#servicios" className="text-white/90 text-base" onClick={() => setIsOpen(false)}>Servicios</a>
+                <a href="perono.lo" className="text-white/90 text-base" onClick={() => setIsOpen(false)}>Servicios</a>
                 <a href="#precios" className="text-white/90 text-base" onClick={() => setIsOpen(false)}>Precios</a>
                 <a href="#docs" className="text-white/90 text-base" onClick={() => setIsOpen(false)}>Docs</a>
                 <button className="mt-2.5 w-full px-[18px] py-2.5 rounded-xl bg-neon-green/10 border border-neon-green/20 text-neon-green font-semibold">
