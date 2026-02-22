@@ -22,12 +22,11 @@ const HeroCyclingContent = () => {
 
     return (
         <div className="relative z-10 flex flex-col items-center justify-center min-h-[60vh] w-full max-w-5xl mx-auto -translate-y-12 md:-translate-y-20 transition-all duration-1000">
-            {/* Logo Triángulo con Círculo y Glow Dinámico */}
             <div
-                className={`w-24 h-24 rounded-full bg-white/5 border ${theme.border} flex items-center justify-center mb-16 ${theme.shadow} animate-logo backdrop-blur-sm transition-all duration-1000`}
+                className={`w-24 h-24 rounded-full bg-white/5 border ${theme.border} flex items-center justify-center mb-16 ${theme.shadow} animate-logo backdrop-blur-sm transition-all duration-300 md:duration-1000`}
             >
                 <div
-                    className={`w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-b-[34px] ${theme.triangle} ${theme.glow} transition-all duration-1000`}
+                    className={`w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-b-[34px] ${theme.triangle} ${theme.glow} transition-all duration-300 md:duration-1000`}
                 >
                 </div>
             </div>
